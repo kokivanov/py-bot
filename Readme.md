@@ -7,7 +7,7 @@
 | **Feature** | **Status** |
 |-------------|------------|
 |Sending nudes| in progress|
-|pong-message and reaction| [X] |
+|pong-message and reaction| :x: |
 
 ## To do
 
