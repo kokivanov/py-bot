@@ -6,8 +6,9 @@
 
 | **Feature** | **Status** |
 |-------------|------------|
-|Sending nudes| in progress|
-|pong-message and reaction| :white_check_mark: |
+|pong-message and reaction|:white_check_mark:|
+|Sending nudes|in progress...|
+|Ping status|in progress...|
 
 ## To do
 
