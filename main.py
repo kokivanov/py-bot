@@ -2,12 +2,13 @@ import json
 import discord
 from discord.utils import get
 from datetime import datetime
-from pingpong import ping
 
 client = discord.Client()
 
 CONFIGS = json.load(open("settings.json"))
 
+if CONFIGS["ENABLED_MODULES"]["PING"] == True:
+    from pingpong import ping
 
 @client.event
 async def on_ready():
