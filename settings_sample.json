@@ -1,0 +1,15 @@
+{
+
+    "TOKEN" : "",
+    "PREFIX" : "",
+    "BOTNAME" : "",
+    "ENABLED_MODULES" : {
+        "HI_MESSAGE" : true,
+        "PING" : true
+    },
+
+    "HI_MESSAGE" : {
+        "REACTION" : ""
+    }
+
+}
