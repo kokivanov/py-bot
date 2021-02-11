@@ -2,7 +2,7 @@ import random
 import datetime
 
 
-def roll_dice(amount: int = 2) -> int:
+def roll_dice(amount: int = 2, cup: int = 6) -> int:
     if not amount:
         amount = 1
 
@@ -14,7 +14,7 @@ def roll_dice(amount: int = 2) -> int:
     tmp = []
 
     for i in range(0, amount):
-        tmp.append(random.randrange(1, 7))
+        tmp.append(random.randrange(1, cup+1))
 
     for i in tmp:
         res = res + str(i) + "  "
