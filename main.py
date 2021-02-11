@@ -34,24 +34,46 @@ async def on_message(message):
         print("Command \"" + command + "\" has args: " + str(args))
 
         if CONFIGS["ENABLED_MODULES"]["GAME_R"] and command == "dice":
-            if len(args) < 1 or not args[0].isdigit():
-                await message.channel.send("Rolling... Rolling... And... " + message.author.mention + " rolls **" + str(game_r.roll_dice())+"**")
-            elif len(args) < 2 and args[0].isdigit():
-                await message.channel.send("Rolling... Rolling... And... " + message.author.mention + " rolls **" + str(game_r.roll_dice(int(args[0])))+"**")
-            elif args[0].isdigit() and args[1].isdigit():
+            a = 2
+            b = 6
+            if len(args) < 1:
+                args.append(a)
+                args.append(b)
+            elif len(args) < 2:
+                if not args[0].isdigit():
+                    args[0] = a
+                args.append(b)
+            elif len(args) < 3:
+                if not args[0].isdigit():
+                    args[0] = a
+                if not args[1].isdigit():
+                    args[1] = b
+
+            try:
                 await message.channel.send("Rolling... Rolling... And... " + message.author.mention + " rolls **" + str(game_r.roll_dice(int(args[0]), int(args[1])))+"**")
-            else:
-                await message.channel.send("Rolling... Rolling... And... " + message.author.mention + " rolls **" + str(game_r.roll_dice())+"**")
+            except:
+                print("Arguments error")
 
         if CONFIGS["ENABLED_MODULES"]["GAME_R"] and command == "random":
+            a = 0
+            b = 10
             if len(args) < 1:
-                await message.channel.send(message.author.mention + " , stars say that your number is **" + str(game_r.random_rn()) + "**")
-            elif len(args) < 2 and args[0].isdigit():
-                await message.channel.send(message.author.mention + ", stars say that your number is **" + str(0, game_r.random_rn(int(args[0]))) + "**")
-            elif len(args) < 3 and args[0].isdigit() and args[1].isdigit():
+                args.append(a)
+                args.append(b)
+            elif len(args) < 2:
+                if not args[0].isdigit():
+                    args[0] = a
+                args.append(b)
+            elif len(args) < 3:
+                if not args[0].isdigit():
+                    args[0] = a
+                if not args[1].isdigit():
+                    args[1] = b
+
+            try:
                 await message.channel.send(message.author.mention + ", stars say that your number is **" + str(game_r.random_rn(int(args[0]), int(args[1]))) + "**")
-            else:
-                await message.channel.send(message.author.mention + " , stars say that your number is **" + str(game_r.random_rn()) + "**")
+            except:
+                print("Arguments error")
 
         if CONFIGS["ENABLED_MODULES"]["HI_MESSAGE"] and (command == "hi" or command == "hello"):
             await message.channel.send('Hello, ' + message.author.mention + '!')

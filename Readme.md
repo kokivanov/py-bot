@@ -4,7 +4,6 @@
 
 ### Features
 
-
 | **Feature**               | **Status**         |
 | ------------------------- | ------------------ |
 | Sending nudes             | **in progress...** |
@@ -23,7 +22,6 @@
 | dice    | Generates specified (2 if no rguments) amount of numbers in range from 1 to 6 (inclusively) | `dice <a> <b>`, where **a** - amount of numbers (dices), will count sum if more than 4 dices, **b** - is maximum possible value at every dice | `a-dice 6 12`                       |
 
 ---
-
 
 ## To do
 
