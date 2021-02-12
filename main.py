@@ -2,16 +2,18 @@ import json
 import discord
 from discord.utils import get
 from datetime import datetime
+from utils import argsUtils
 
 client = discord.Client()
 
 CONFIGS = json.load(open("settings.json"))
 
 if CONFIGS["ENABLED_MODULES"]["PING"] == True:
-    from pingpong import ping
+    from utils.pingpong import ping
 
 if CONFIGS["ENABLED_MODULES"]["GAME_R"] == True:
     from utils import game_r
+
 
 @client.event
 async def on_ready():
@@ -21,7 +23,7 @@ async def on_ready():
 async def on_message(message):
     print(str(message.created_at) + "=> Message from {0.author} at channel {0.channel} : {0.content}".format(message))
 
-    if message.author == client.user:
+    if message.author == client.user.bot:
         return
 
     if message.content.startswith(CONFIGS["PREFIX"]):
@@ -29,51 +31,22 @@ async def on_message(message):
         tmpcmd = message.content.split(" ")[0].lower()
         command = str(tmpcmd[len(CONFIGS["PREFIX"]):len(tmpcmd) + 1])
         del tmpcmd
-        args = message.content.split(" ")[1:]
+        args = argsUtils.parseArguments(message, CONFIGS["PREFIX"])
 
         print("Command \"" + command + "\" has args: " + str(args))
 
-        if CONFIGS["ENABLED_MODULES"]["GAME_R"] and command == "dice":
-            a = 2
-            b = 6
-            if len(args) < 1:
-                args.append(a)
-                args.append(b)
-            elif len(args) < 2:
-                if not args[0].isdigit():
-                    args[0] = a
-                args.append(b)
-            elif len(args) < 3:
-                if not args[0].isdigit():
-                    args[0] = a
-                if not args[1].isdigit():
-                    args[1] = b
+        if CONFIGS["ENABLED_MODULES"]["GAME_R"]:
+            if command == "dice":
+                try:
+                    await message.channel.send("Rolling... Rolling... And... " + message.author.mention + " rolls **" + str(game_r.roll_dice(args))+"**")
+                except:
+                    print("Arguments error")
 
-            try:
-                await message.channel.send("Rolling... Rolling... And... " + message.author.mention + " rolls **" + str(game_r.roll_dice(int(args[0]), int(args[1])))+"**")
-            except:
-                print("Arguments error")
-
-        if CONFIGS["ENABLED_MODULES"]["GAME_R"] and command == "random":
-            a = 0
-            b = 10
-            if len(args) < 1:
-                args.append(a)
-                args.append(b)
-            elif len(args) < 2:
-                if not args[0].isdigit():
-                    args[0] = a
-                args.append(b)
-            elif len(args) < 3:
-                if not args[0].isdigit():
-                    args[0] = a
-                if not args[1].isdigit():
-                    args[1] = b
-
-            try:
-                await message.channel.send(message.author.mention + ", stars say that your number is **" + str(game_r.random_rn(int(args[0]), int(args[1]))) + "**")
-            except:
-                print("Arguments error")
+            if command == "random":
+                try:
+                    await message.channel.send(message.author.mention + ", stars say that your number is **" + str(game_r.random_rn(args)) + "**")
+                except:
+                    print("Arguments error")
 
         if CONFIGS["ENABLED_MODULES"]["HI_MESSAGE"] and (command == "hi" or command == "hello"):
             await message.channel.send('Hello, ' + message.author.mention + '!')
