@@ -41,6 +41,21 @@
   - [ ] Chat filter
   - [ ] Rolereact
   - [ ] Reminder
+- [ ] Entertainment
+  - [ ] Images
+  - [ ] Memes
+  - [ ] Videos
+  - [ ] Gifs
+  - [ ] Count days till...
+- [ ] Gaming
+  - [ ] Overwatch
+  - [ ] Osu
+  - [ ] Hearthstone
+  - [ ] League of legends
+  - [ ] CS:GO
+  - [ ] GTA
+- [ ] Callendar
+- [ ] Custom settings for each server
 - [ ] UI/UX
   - [ ] Help page
   - [ ] Dashboard
