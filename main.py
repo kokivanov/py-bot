@@ -38,15 +38,16 @@ async def on_message(message):
 
         # Checking if user has cooldown
         if message.author.mention in lastUse.keys() and currentUse - lastUse.get(message.author.mention) < cooldown:
-            print(str(currentUse - lastUse.get(message.author.mention)) + "left")
+            print(str(cooldown - (currentUse - lastUse.get(message.author.mention))) + "left")
             return
-            
+        # Sets last usage timestamp
         if message.author.mention in lastUse.keys():
             lastUse.pop(message.author.mention)
             lastUse.update({message.author.mention : currentUse})
         else:
             lastUse.update({message.author.mention : currentUse})
-                
+            
+        
         tmpcmd = message.content.split(" ")[0].lower()
         command = str(tmpcmd[len(CONFIGS["PREFIX"]):len(tmpcmd) + 1])
         del tmpcmd
@@ -75,8 +76,18 @@ async def on_message(message):
         if CONFIGS["ENABLED_MODULES"]["PING"] and command == "ping":
             await message.channel.send('Pong! Ping is **' + str(round(ping(message) * 1000)) + 'ms.** 🏓')
         
-# Sets last usage timestamp
-        
-
+        if CONFIGS["ENABLED_MODULES"]["SUDO"] and command == "sudo" or "say":
+            repeatCount = 1
+            if len(args) < 1:
+                return
+            elif len(args) < 2:
+                pass
+            elif not args[1].isdigit():
+                pass
+            else:
+                repeatCount = int(args[1])
+            await message.delete()
+            for i in range(0, repeatCount):
+                await message.channel.send(args[0])
 
 client.run(CONFIGS["TOKEN"])
