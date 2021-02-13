@@ -40,7 +40,8 @@
   - [ ] Logs
   - [ ] Chat filter
   - [ ] Rolereact
-  - [ ] Reminder
+  - [ ] Reminders
+  - [ ] Announces
 - [ ] Entertainment
   - [ ] Images
   - [ ] Memes
