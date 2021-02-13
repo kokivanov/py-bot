@@ -1,7 +1,6 @@
 import random
 import datetime
 
-
 def roll_dice(args : []) -> int:
 
     amount = 2

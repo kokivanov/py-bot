@@ -1,6 +1,5 @@
 import discord
 
-
 def parseArguments(message, prefix: str) -> []:
     args = message.content.split(" ")[len(prefix)-1:]
     ind = []
@@ -9,6 +8,7 @@ def parseArguments(message, prefix: str) -> []:
         if i == "'" or i == '"':
             splitter = i
             break
+        
     i: int = 0
     if splitter:
         for ar in args:

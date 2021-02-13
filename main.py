@@ -5,17 +5,15 @@ from datetime import datetime
 from utils import argsUtils
 
 client = discord.Client()
-
 CONFIGS = json.load(open("settings.json"))
 
 if CONFIGS["ENABLED_MODULES"]["PING"] == True:
     from utils.pingpong import ping
-
 if CONFIGS["ENABLED_MODULES"]["GAME_R"] == True:
     from utils import game_r
 
 cooldown = 3
-lastUse = {"" : 0}
+lastUse = {"": 0}
 
 @client.event
 async def on_ready():
@@ -25,15 +23,16 @@ async def on_ready():
 @client.event
 async def on_message(message):
     print(str(message.created_at) + "=> Message from {0.author} at channel {0.channel} : {0.content}".format(message))
-    
+
     if message.author == client.user.bot:
-        return 
+        return
 
 # Main body of bot
     if message.content.startswith(CONFIGS["PREFIX"]):
         # Sets timestamps to usage list
         currentUse = datetime.timestamp(datetime.now())
-        if currentUse - lastUse["^sys"] > cooldown : lastUse.clear()
+        if currentUse - lastUse["^sys"] > cooldown:
+            lastUse.clear()
         lastUse["^sys"] = currentUse
 
         # Checking if user has cooldown
@@ -43,11 +42,10 @@ async def on_message(message):
         # Sets last usage timestamp
         if message.author.mention in lastUse.keys():
             lastUse.pop(message.author.mention)
-            lastUse.update({message.author.mention : currentUse})
+            lastUse.update({message.author.mention: currentUse})
         else:
-            lastUse.update({message.author.mention : currentUse})
-            
-        
+            lastUse.update({message.author.mention: currentUse})
+
         tmpcmd = message.content.split(" ")[0].lower()
         command = str(tmpcmd[len(CONFIGS["PREFIX"]):len(tmpcmd) + 1])
         del tmpcmd
@@ -75,7 +73,7 @@ async def on_message(message):
 
         if CONFIGS["ENABLED_MODULES"]["PING"] and command == "ping":
             await message.channel.send('Pong! Ping is **' + str(round(ping(message) * 1000)) + 'ms.** 🏓')
-        
+
         if CONFIGS["ENABLED_MODULES"]["SUDO"] and command == "sudo" or "say":
             repeatCount = 1
             if len(args) < 1:
