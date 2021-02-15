@@ -1,3 +1,4 @@
+
 # Testing python bot
 
 ## [EN]
@@ -6,8 +7,8 @@
 
 | **Feature**               | **Status**         |
 | ------------------------- | ------------------ |
-| Sending nudes             | **in progress...** |
-| Clear command             | **in progress...** |
+| Sending nudes             | **in progress... (current)** |
+| Clear command             | :white_check_mark: |
 | Pong-message and reaction | :white_check_mark: |
 | Random command            | :white_check_mark: |
 | Ping check                | :white_check_mark: |
@@ -40,9 +41,26 @@
   - [ ] Logs
   - [ ] Chat filter
   - [ ] Rolereact
-  - [ ] Reminder
+  - [ ] Reminders
+  - [ ] Announces
+- [ ] Entertainment
+  - [ ] Images
+  - [ ] Memes
+  - [ ] Videos
+  - [ ] Gifs
+  - [ ] Count days till...
+- [ ] Gaming
+  - [ ] Overwatch
+  - [ ] Osu
+  - [ ] Hearthstone
+  - [ ] League of legends
+  - [ ] CS:GO
+  - [ ] GTA
+- [ ] Callendar
+- [ ] Custom settings for each server
 - [ ] UI/UX
   - [ ] Help page
   - [ ] Dashboard
   - [ ] Adminpannel
 - [ ] ||Sending nudes||
+
