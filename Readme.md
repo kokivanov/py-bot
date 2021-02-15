@@ -37,7 +37,7 @@
   - [ ] inventory
 - [ ] Useful utils
   - [ ] Kick, ban, tempban, tempmute, mute
-  - [ ] Clear
+  - [X] Clear
   - [ ] Logs
   - [ ] Chat filter
   - [ ] Rolereact
