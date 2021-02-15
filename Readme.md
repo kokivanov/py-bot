@@ -1,3 +1,4 @@
+
 # Testing python bot
 
 ## [EN]
@@ -40,7 +41,8 @@
   - [ ] Logs
   - [ ] Chat filter
   - [ ] Rolereact
-  - [ ] Reminder
+  - [ ] Reminders
+  - [ ] Announces
 - [ ] Entertainment
   - [ ] Images
   - [ ] Memes
@@ -61,3 +63,4 @@
   - [ ] Dashboard
   - [ ] Adminpannel
 - [ ] ||Sending nudes||
+
