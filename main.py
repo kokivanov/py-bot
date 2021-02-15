@@ -1,4 +1,5 @@
 import json
+import asyncio
 import discord
 from discord.utils import get
 from datetime import datetime
@@ -15,6 +16,9 @@ if CONFIGS["ENABLED_MODULES"]["GAME_R"] == True:
 cooldown = 3
 lastUse = {"": 0}
 
+def is_me(m):
+    return m.author == client.user
+
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
@@ -22,7 +26,8 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    print(str(message.created_at) + "=> Message from {0.author} at channel {0.channel} : {0.content}".format(message))
+    print(str(message.created_at) +
+          "=> Message from {0.author} at channel  #{0.channel} : {0.content}".format(message))
 
     if message.author == client.user.bot:
         return
@@ -37,7 +42,8 @@ async def on_message(message):
 
         # Checking if user has cooldown
         if message.author.mention in lastUse.keys() and currentUse - lastUse.get(message.author.mention) < cooldown:
-            print(str(cooldown - (currentUse - lastUse.get(message.author.mention))) + "left")
+            print(
+                str(cooldown - (currentUse - lastUse.get(message.author.mention))) + "left")
             return
         # Sets last usage timestamp
         if message.author.mention in lastUse.keys():
@@ -74,7 +80,12 @@ async def on_message(message):
         if CONFIGS["ENABLED_MODULES"]["PING"] and command == "ping":
             await message.channel.send('Pong! Ping is **' + str(round(ping(message) * 1000)) + 'ms.** 🏓')
 
-        if CONFIGS["ENABLED_MODULES"]["SUDO"] and command == "sudo" or "say":
+        if CONFIGS["ENABLED_MODULES"]["ADMUTILS"] and command == "clear":
+            oniichan = await message.channel.send("Bot deleted **" + str(await argsUtils.clear(message, args)) + "** message(s).")
+            await asyncio.sleep(5)
+            await oniichan.delete()
+
+        if CONFIGS["ENABLED_MODULES"]["SUDO"] and command == "sudo" or command == "say":
             repeatCount = 1
             if len(args) < 1:
                 return
@@ -87,5 +98,6 @@ async def on_message(message):
             await message.delete()
             for i in range(0, repeatCount):
                 await message.channel.send(args[0])
+                await asyncio.sleep(0.5)
 
 client.run(CONFIGS["TOKEN"])

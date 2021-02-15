@@ -12,7 +12,9 @@ def parseArguments(message, prefix: str) -> []:
     i: int = 0
     if splitter:
         for ar in args:
-            if len(ar) > 1 and (splitter in ar):
+            if len(ar) > 1 and ar[0] == splitter:
+                ind.append(i)
+            if len(ar) > 1 and ar[len(ar)-1] == splitter:
                 ind.append(i)
             elif ar == splitter:
                 ind.append(i)
@@ -60,3 +62,15 @@ def parseArguments(message, prefix: str) -> []:
         args.remove('')
 
     return args
+
+async def clear(message : discord.Message, args : []) -> int:
+    
+    amount : int
+    if len(args) > 0 and args[0].isdigit():
+        amount = int(args[0])
+    else:
+        amount = 10
+    
+    deles = await message.channel.purge(limit = amount)
+    return len(deles)
+    
