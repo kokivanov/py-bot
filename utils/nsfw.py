@@ -31,7 +31,7 @@ class nsfw(object):
         #    if len(args) < 2:
 
 if __name__ == "__main__":
-    
+    client = nsfw("""type arguments""")
     client.check()
     for post in client.reddit_byauthor("concretebeats").submissions.hot(limit=3):
         print(post.url)
