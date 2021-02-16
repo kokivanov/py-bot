@@ -1,17 +1,20 @@
-import json
 import asyncio
-import discord
-from discord.utils import get
+import json
 from datetime import datetime
+
+import discord
+
 from utils import argsUtils
 
 client = discord.Client()
 CONFIGS = json.load(open("settings.json"))
 
-if CONFIGS["ENABLED_MODULES"]["PING"] == True:
+if CONFIGS["ENABLED_MODULES"]["PING"]:
     from utils.pingpong import ping
-if CONFIGS["ENABLED_MODULES"]["GAME_R"] == True:
+if CONFIGS["ENABLED_MODULES"]["GAME_R"]:
     from utils import game_r
+if CONFIGS["ENABLED_MODULES"]["ADMUTILS"]:
+    from utils import admin
 
 cooldown = 3
 lastUse = {"": 0}
@@ -62,16 +65,9 @@ async def on_message(message):
         # Calling commands
         if CONFIGS["ENABLED_MODULES"]["GAME_R"]:
             if command == "dice":
-                try:
-                    await message.channel.send("Rolling... Rolling... And... " + message.author.mention + " rolls **" + str(game_r.roll_dice(args))+"**")
-                except:
-                    print("Arguments error")
-
+                await message.channel.send("Rolling... Rolling... And... " + message.author.mention + " rolls **" + str(game_r.roll_dice(args))+"**")
             if command == "random":
-                try:
-                    await message.channel.send(message.author.mention + ", stars say that your number is **" + str(game_r.random_rn(args)) + "**")
-                except:
-                    print("Arguments error")
+                await message.channel.send(message.author.mention + ", stars say that your number is **" + str(game_r.random_rn(args)) + "**")
 
         if CONFIGS["ENABLED_MODULES"]["HI_MESSAGE"] and (command == "hi" or command == "hello"):
             await message.channel.send('Hello, ' + message.author.mention + '!')
@@ -80,24 +76,12 @@ async def on_message(message):
         if CONFIGS["ENABLED_MODULES"]["PING"] and command == "ping":
             await message.channel.send('Pong! Ping is **' + str(round(ping(message) * 1000)) + 'ms.** 🏓')
 
-        if CONFIGS["ENABLED_MODULES"]["ADMUTILS"] and command == "clear":
-            oniichan = await message.channel.send("Bot deleted **" + str(await argsUtils.clear(message, args)) + "** message(s).")
+        if CONFIGS["ENABLED_MODULES"]["ADMUTILS"] and command == "clear":            
+            mes = await message.channel.send("Bot deleted **" + str(await admin.clear(message, args)) + "** message(s).")
             await asyncio.sleep(5)
-            await oniichan.delete()
+            await mes.delete()
 
         if CONFIGS["ENABLED_MODULES"]["SUDO"] and command == "sudo" or command == "say":
-            repeatCount = 1
-            if len(args) < 1:
-                return
-            elif len(args) < 2:
-                pass
-            elif not args[1].isdigit():
-                pass
-            else:
-                repeatCount = int(args[1])
-            await message.delete()
-            for i in range(0, repeatCount):
-                await message.channel.send(args[0])
-                await asyncio.sleep(0.5)
+            await admin.say(message, args)
 
 client.run(CONFIGS["TOKEN"])
