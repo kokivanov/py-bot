@@ -25,7 +25,7 @@ async def handler(command: str, args: [], message: discord.Message, CONFIGS: dic
     if CONFIGS["ENABLED_MODULES"]["NSFW"]:
         if command == "sendnudes" or command == "r34" or command == "porn" or command == "hentai" or command == "jerk":
             # await message.channel.send(content="Here is you pervy stuff", file=cl_nsfw.handle(args))
-            await message.channel.send(content=(message.author.mention + "Here is you pervy stuff:\n" + cl_nsfw.standard()))
+            await message.channel.send(content=(message.author.mention + " Here is you pervy stuff:\n" + cl_nsfw.standard()))
 
     # Admin
 
