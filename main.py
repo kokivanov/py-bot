@@ -5,19 +5,25 @@ from datetime import datetime
 import discord
 
 from utils import argsUtils
+from utils import handler
+from utils import nsfw
 
 client = discord.Client()
 CONFIGS = json.load(open("settings.json"))
-
-if CONFIGS["ENABLED_MODULES"]["PING"]:
-    from utils.pingpong import ping
-if CONFIGS["ENABLED_MODULES"]["GAME_R"]:
-    from utils import game_r
-if CONFIGS["ENABLED_MODULES"]["ADMUTILS"]:
-    from utils import admin
+settings = json.load(open("usersettings.json"))
 
 cooldown = 3
 lastUse = {"": 0}
+
+cl_nsfw = cl_nsfw = nsfw.nsfw(
+            duname=settings["Danbooru"]["username"],
+            dapi=settings["Danbooru"]["api_key"],
+            rid=settings["Reddit"]["id"],
+            rsec=settings["Reddit"]["secret"],
+            rname=settings["Reddit"]["scriptname"],
+            runame=settings["Reddit"]["username"],
+            rpass=settings["Reddit"]["password"]
+        )
 
 def is_me(m):
     return m.author == client.user
@@ -29,10 +35,11 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    
     print(str(message.created_at) +
           "=> Message from {0.author} at channel  #{0.channel} : {0.content}".format(message))
 
-    if message.author == client.user.bot:
+    if message.author == client.user.bot or message.author == message.guild.me:
         return
 
 # Main body of bot
@@ -63,25 +70,7 @@ async def on_message(message):
         print("Command \"" + command + "\" has args: " + str(args))
 
         # Calling commands
-        if CONFIGS["ENABLED_MODULES"]["GAME_R"]:
-            if command == "dice":
-                await message.channel.send("Rolling... Rolling... And... " + message.author.mention + " rolls **" + str(game_r.roll_dice(args))+"**")
-            if command == "random":
-                await message.channel.send(message.author.mention + ", stars say that your number is **" + str(game_r.random_rn(args)) + "**")
-
-        if CONFIGS["ENABLED_MODULES"]["HI_MESSAGE"] and (command == "hi" or command == "hello"):
-            await message.channel.send('Hello, ' + message.author.mention + '!')
-            await message.add_reaction(CONFIGS["HI_MESSAGE"]["REACTION"])
-
-        if CONFIGS["ENABLED_MODULES"]["PING"] and command == "ping":
-            await message.channel.send('Pong! Ping is **' + str(round(ping(message) * 1000)) + 'ms.** 🏓')
-
-        if CONFIGS["ENABLED_MODULES"]["ADMUTILS"] and command == "clear":            
-            mes = await message.channel.send("Bot deleted **" + str(await admin.clear(message, args)) + "** message(s).")
-            await asyncio.sleep(5)
-            await mes.delete()
-
-        if CONFIGS["ENABLED_MODULES"]["SUDO"] and command == "sudo" or command == "say":
-            await admin.say(message, args)
+        if message.author != client.user.bot:
+            await handler.handler(command=command, args=args, message=message, CONFIGS=CONFIGS, cl_nsfw=cl_nsfw)
 
 client.run(CONFIGS["TOKEN"])
