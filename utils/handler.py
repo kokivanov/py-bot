@@ -2,6 +2,7 @@ import discord
 from utils import cadmin, argsUtils, game_r, pingpong, nsfw
 import asyncio
 import json
+import requests
 
 fl = open("usersettings.json")
 settings = json.loads(fl.read())
@@ -24,22 +25,32 @@ async def handler(command: str, args: [], message: discord.Message, CONFIGS: dic
 
     if CONFIGS["ENABLED_MODULES"]["NSFW"]:
         if command == "sendnudes" or command == "r34" or command == "porn" or command == "hentai" or command == "jerk":
+            request = cl_nsfw.standard()
+            if request.endswith(".jpg") or request.endswith(".png") or request.endswith(".gif"):
+                embed = discord.Embed().set_image(url=request)
+                embed.title = "Some pervy stuff for " + message.author.display_name
+                await message.channel.send(content=(message.author.mention + " Here is your pervy stuff:\n"), embed=embed)
+            else:
+                await message.channel.send(content=(message.author.mention + " Here is your pervy stuff:\n" + request))
             # await message.channel.send(content="Here is you pervy stuff", file=cl_nsfw.handle(args))
-            await message.channel.send(content=(message.author.mention + " Here is your pervy stuff:\n" + cl_nsfw.standard()))
 
     # Admin
 
-    if CONFIGS["ENABLED_MODULES"]["ADMUTILS"] and message.author.guild_permissions.administrator:
+    if CONFIGS["ENABLED_MODULES"]["ADMUTILS"]:
         if (command == "clear" or command == "purge"):
-            mes = await message.channel.send("Bot deleted **" + str(await cadmin.clear(message, args)) + "** message(s).")
-            await asyncio.sleep(5)
-            await mes.delete()
+            if not message.author.guild_permissions.administrator:
+                await message.channel.send("Sorry " + message.author.mention + ", you don't have permission to do that")
+            else:
+                mes = await message.channel.send("Bot deleted **" + str(await cadmin.clear(message, args)) + "** message(s).")
+                await asyncio.sleep(5)
+                await mes.delete()
 
         if (command == "sudo" or command == "say"):
-            await cadmin.say(message, args)
-
-    elif not message.author.guild_permissions.administrator:
-        await message.channel.send("Sorry " + message.author.mention + ", you don't have permission to do that")
+            if not message.author.guild_permissions.administrator:
+                await message.channel.send("Sorry " + message.author.mention + ", you don't have permission to do that")
+            else:
+                await cadmin.say(message, args)
+    
 
     try:
         await message.delete()
