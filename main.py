@@ -16,6 +16,7 @@ if CONFIGS["ENABLED_MODULES"]["GAME_R"]:
 if CONFIGS["ENABLED_MODULES"]["ADMUTILS"]:
     from utils import admin
 
+
 cooldown = 3
 lastUse = {"": 0}
 
