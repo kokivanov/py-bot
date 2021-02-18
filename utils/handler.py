@@ -25,14 +25,13 @@ async def handler(command: str, args: [], message: discord.Message, CONFIGS: dic
 
     if CONFIGS["ENABLED_MODULES"]["NSFW"]:
         if command == "sendnudes" or command == "r34" or command == "porn" or command == "hentai" or command == "jerk":
-            request = cl_nsfw.standard()
+            request = cl_nsfw.handler(args=args)
             if request.endswith(".jpg") or request.endswith(".png") or request.endswith(".gif"):
                 embed = discord.Embed().set_image(url=request)
-                embed.title = "Some pervy stuff for " + message.author.display_name
+                embed.title = "Some pervy stuff for " + message.author.display_name + "さん"
                 await message.channel.send(content=(message.author.mention + " Here is your pervy stuff:\n"), embed=embed)
             else:
                 await message.channel.send(content=(message.author.mention + " Here is your pervy stuff:\n" + request))
-            # await message.channel.send(content="Here is you pervy stuff", file=cl_nsfw.handle(args))
 
     # Admin
 
@@ -51,7 +50,6 @@ async def handler(command: str, args: [], message: discord.Message, CONFIGS: dic
             else:
                 await cadmin.say(message, args)
     
-
     try:
         await message.delete()
     except:
