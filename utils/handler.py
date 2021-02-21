@@ -27,7 +27,9 @@ async def handler(command: str, args: [], message: discord.Message, CONFIGS: dic
     if CONFIGS["ENABLED_MODULES"]["NSFW"]:
         if command == "sendnudes" or command == "r34" or command == "porn" or command == "hentai" or command == "jerk":
             request = cl_medias.handler(args=args)
-            if request.endswith(".jpg") or request.endswith(".png") or request.endswith(".gif"):
+            if request == None:
+                await message.channel.send("Not found :(")
+            elif request.endswith(".jpg") or request.endswith(".png") or request.endswith(".gif"):
                 embed = discord.Embed().set_image(url=str(request))
                 embed.add_field(name="**Link**", value=str(request))
                 embed.title = "Some pervy stuff for " + message.author.display_name + "さん"

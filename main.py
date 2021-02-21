@@ -22,7 +22,8 @@ cl_medias = medias.medias(
     rsec=settings["Reddit"]["secret"],
     rname=settings["Reddit"]["scriptname"],
     runame=settings["Reddit"]["username"],
-    rpass=settings["Reddit"]["password"]
+    rpass=settings["Reddit"]["password"],
+    nsfw_allowed=settings["nsfw_allowed"]
 )
 
 
