@@ -1,5 +1,6 @@
 .vscode
 .venv
+.venvwin
 settings.json
 __pycache__
 usersettings.json
