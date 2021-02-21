@@ -63,14 +63,5 @@ def parseArguments(message, prefix: str) -> []:
 
     return args
 
-async def clear(message : discord.Message, args : []) -> int:
-    
-    amount : int
-    if len(args) > 0 and args[0].isdigit():
-        amount = int(args[0])
-    else:
-        amount = 10
-    
-    deles = await message.channel.purge(limit = amount)
-    return len(deles)
+
     
