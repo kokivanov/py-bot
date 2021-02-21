@@ -16,26 +16,29 @@ cooldown = 3
 lastUse = {"": 0}
 
 cl_medias = medias.medias(
-            duname=settings["Danbooru"]["username"],
-            dapi=settings["Danbooru"]["api_key"],
-            rid=settings["Reddit"]["id"],
-            rsec=settings["Reddit"]["secret"],
-            rname=settings["Reddit"]["scriptname"],
-            runame=settings["Reddit"]["username"],
-            rpass=settings["Reddit"]["password"]
-        )
+    duname=settings["Danbooru"]["username"],
+    dapi=settings["Danbooru"]["api_key"],
+    rid=settings["Reddit"]["id"],
+    rsec=settings["Reddit"]["secret"],
+    rname=settings["Reddit"]["scriptname"],
+    runame=settings["Reddit"]["username"],
+    rpass=settings["Reddit"]["password"]
+)
+
 
 def is_me(m):
     return m.author == client.user
+
 
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     lastUse["^sys"] = datetime.timestamp(datetime.now())
 
+
 @client.event
 async def on_message(message):
-    
+
     print(str(message.created_at) +
           "=> Message from {0.author} at channel  #{0.channel} : {0.content}".format(message))
 

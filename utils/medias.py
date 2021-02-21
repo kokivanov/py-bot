@@ -16,7 +16,6 @@ rList = {"standard" : ['hentai', 'Hentai4Everyone', 'hentai_fish', 'Tentai', 'He
         "genshinimpact" : ["GenshinImpactNSFW", "GenshinImpactHentai", "GenshinLewds"],
         "cosplay" : ["CosplayBoobs", "cosplay", "cosplaygirls"],
         "sfw" : ["AnimeART", "animeartists"],
-
 }
 
 class medias(object):

@@ -7,7 +7,8 @@ import requests
 fl = open("usersettings.json")
 settings = json.loads(fl.read())
 
-async def handler(command: str, args: [], message: discord.Message, CONFIGS: dict, cl_medias : medias.medias) -> int:
+
+async def handler(command: str, args: [], message: discord.Message, CONFIGS: dict, cl_medias: medias.medias) -> int:
     if CONFIGS["ENABLED_MODULES"]["GAME_R"]:
         if command == "dice":
             await message.channel.send("Rolling... Rolling... And... " + message.author.mention + " rolls **" + str(game_r.roll_dice(args))+"**")
@@ -28,11 +29,11 @@ async def handler(command: str, args: [], message: discord.Message, CONFIGS: dic
             request = cl_medias.handler(args=args)
             if request.endswith(".jpg") or request.endswith(".png") or request.endswith(".gif"):
                 embed = discord.Embed().set_image(url=str(request))
-                embed.add_field(name="**Link**",value=str(request))
+                embed.add_field(name="**Link**", value=str(request))
                 embed.title = "Some pervy stuff for " + message.author.display_name + "さん"
                 await message.channel.send(content=(message.author.mention + " Here is your pervy stuff:\n"), embed=embed)
             else:
-                embed = discord.Embed().add_field(name="**Link**",value=str(request))
+                embed = discord.Embed().add_field(name="**Link**", value=str(request))
                 embed.title = "Some pervy stuff for " + message.author.display_name + "さん"
                 await message.channel.send(content=(message.author.mention + " Here is your pervy stuff:\n"), embed=embed)
 
@@ -52,11 +53,11 @@ async def handler(command: str, args: [], message: discord.Message, CONFIGS: dic
                 await message.channel.send("Sorry " + message.author.mention + ", you don't have permission to do that")
             else:
                 await cadmin.say(message, args)
-    
+
     try:
         await message.delete()
     except:
         print("Can't delete message => " + str(Exception.args))
 
-#if __name__ == "__main__":
+# if __name__ == "__main__":
 #    handler("say", )
