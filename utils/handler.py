@@ -1,5 +1,5 @@
 import discord
-from utils import cadmin, argsUtils, game_r, pingpong, nsfw
+from utils import cadmin, argsUtils, game_r, pingpong, medias
 import asyncio
 import json
 import requests
@@ -7,7 +7,7 @@ import requests
 fl = open("usersettings.json")
 settings = json.loads(fl.read())
 
-async def handler(command: str, args: [], message: discord.Message, CONFIGS: dict, cl_nsfw : nsfw.nsfw) -> int:
+async def handler(command: str, args: [], message: discord.Message, CONFIGS: dict, cl_medias : medias.medias) -> int:
     if CONFIGS["ENABLED_MODULES"]["GAME_R"]:
         if command == "dice":
             await message.channel.send("Rolling... Rolling... And... " + message.author.mention + " rolls **" + str(game_r.roll_dice(args))+"**")
@@ -25,13 +25,16 @@ async def handler(command: str, args: [], message: discord.Message, CONFIGS: dic
 
     if CONFIGS["ENABLED_MODULES"]["NSFW"]:
         if command == "sendnudes" or command == "r34" or command == "porn" or command == "hentai" or command == "jerk":
-            request = cl_nsfw.handler(args=args)
+            request = cl_medias.handler(args=args)
             if request.endswith(".jpg") or request.endswith(".png") or request.endswith(".gif"):
-                embed = discord.Embed().set_image(url=request)
+                embed = discord.Embed().set_image(url=str(request))
+                embed.add_field(name="**Link**",value=str(request))
                 embed.title = "Some pervy stuff for " + message.author.display_name + "さん"
                 await message.channel.send(content=(message.author.mention + " Here is your pervy stuff:\n"), embed=embed)
             else:
-                await message.channel.send(content=(message.author.mention + " Here is your pervy stuff:\n" + request))
+                embed = discord.Embed().add_field(name="**Link**",value=str(request))
+                embed.title = "Some pervy stuff for " + message.author.display_name + "さん"
+                await message.channel.send(content=(message.author.mention + " Here is your pervy stuff:\n"), embed=embed)
 
     # Admin
 
@@ -53,7 +56,7 @@ async def handler(command: str, args: [], message: discord.Message, CONFIGS: dic
     try:
         await message.delete()
     except:
-        print("Can't delete message => " + Exception)
+        print("Can't delete message => " + str(Exception.args))
 
 #if __name__ == "__main__":
 #    handler("say", )

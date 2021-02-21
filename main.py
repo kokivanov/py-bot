@@ -6,7 +6,7 @@ import discord
 
 from utils import argsUtils
 from utils import handler
-from utils import nsfw
+from utils import medias
 
 client = discord.Client()
 CONFIGS = json.load(open("settings.json"))
@@ -15,7 +15,7 @@ settings = json.load(open("usersettings.json"))
 cooldown = 3
 lastUse = {"": 0}
 
-cl_nsfw = cl_nsfw = nsfw.nsfw(
+cl_medias = medias.medias(
             duname=settings["Danbooru"]["username"],
             dapi=settings["Danbooru"]["api_key"],
             rid=settings["Reddit"]["id"],
@@ -71,6 +71,6 @@ async def on_message(message):
 
         # Calling commands
         if message.author != client.user.bot:
-            await handler.handler(command=command, args=args, message=message, CONFIGS=CONFIGS, cl_nsfw=cl_nsfw)
+            await handler.handler(command=command, args=args, message=message, CONFIGS=CONFIGS, cl_medias=cl_medias)
 
 client.run(CONFIGS["TOKEN"])
