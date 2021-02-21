@@ -10,7 +10,7 @@ settings = json.loads(fl.read())
 
 async def handler(command: str, args: [], message: discord.Message, CONFIGS: dict, cl_medias: medias.medias) -> int:
     if CONFIGS["ENABLED_MODULES"]["GAME_R"]:
-        if command == "dice":
+        if command == "dice" or command == "roll":
             await message.channel.send("Rolling... Rolling... And... " + message.author.mention + " rolls **" + str(game_r.roll_dice(args))+"**")
         if command == "random":
             await message.channel.send(message.author.mention + ", stars say that your number is **" + str(game_r.random_rn(args)) + "**")
@@ -25,7 +25,7 @@ async def handler(command: str, args: [], message: discord.Message, CONFIGS: dic
     # NSFW
 
     if CONFIGS["ENABLED_MODULES"]["NSFW"]:
-        if command == "sendnudes" or command == "r34" or command == "porn" or command == "hentai" or command == "jerk":
+        if command == "sendnudes" or command == "r34" or command == "nsfw" or command == "porn" or command == "hentai" or command == "jerk" or command == "media":
             request = cl_medias.handler(args=args)
             if request == None:
                 await message.channel.send("Not found :(")
