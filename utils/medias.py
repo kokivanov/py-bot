@@ -10,46 +10,40 @@ fl = open("usersettings.json")
 settings = json.loads(fl.read())
 
 rList = {"standard" : ['hentai', 'Hentai4Everyone', 'hentai_fish', 'Tentai', 'HentaiManga', 'HypnoHentai', 'HentaiAnime', 'HentaiSource', 'nhentai', 'hentaifemdom', 'HentaiPetgirls', 'rule34', 'hentaibondage', 'hentaihaven', 'ecchi'],
-        "raphtalia" : ["RaphtaliaHentai", "shieldherohentai"]}
+        "raphtalia" : ["RaphtaliaHentai", "shieldherohentai"],
+        "3d" : ["porn", "pornvids", "nsfw_gifs", "porn_gifs"],
+        "overwatch" : ["OverwatchNSFW", "Rule34Overwatch"],
+        "genshinimpact" : ["GenshinImpactNSFW", "GenshinImpactHentai", "GenshinLewds"],
+        "cosplay" : ["CosplayBoobs", "cosplay", "cosplaygirls"],
+        "sfw" : ["AnimeART", "animeartists"],
 
+}
 
-
-class nsfw(object):
+class medias(object):
         avialble_commands = ["nsfw", "hentai", "r34"]
         dkeys = ["-a", "-k", "-t"]
         rkey = ["-s", "-r", "-a"]
 
+        snfw_allowed : bool
+
         aliases = { 
             "standard" : "standard",
-            "raph" : "raphtalia", "raphtalia" : "raphtalia", "rph" : "raphtalia"
+            "raph" : "raphtalia", "raphtalia" : "raphtalia", "rph" : "raphtalia",
+            "porn" : "3d", "3d" : "3d",
+            "overwatch" : "overwatch", "ow" : "overwatch", "over" : "overwatch",
+            "genshinimpact" : "genshinimpact", "gi" : "genshinimpact", "genshin" : "genshinimpact",
+            "cosplay" : "cos", "cosplay" : "cosplay",
+            "art" : "sfw", "sfw" : "sfw",
+
         }
         danbooru : Danbooru
         reddit : praw.Reddit
-        aliases : {}
         
         def reddit_byauthor(self, arg):
             posts = self.reddit.redditor(arg.lower())
             return posts
 
-        # def raphtalia(self):
-        #     sub_r : str = rList["raphtalia"][random.randint(0, len(rList["raphtalia"])-1)]
-        #     print(sub_r)
-        #     sub = self.reddit.subreddit(sub_r)
-        #     del sub_r
-        #     if sub.random():
-        #         post = sub.random().url
-        #         print(post)
-        #         if (sub.random().url == None):
-        #             return self.raphtalia()
-
-        #         if self.__isImage(post):
-        #             return post
-        #         else:
-        #             return self.raphtalia()
-        #     else:
-        #         return self.raphtalia()
-
-        def get(self, topic):
+        def getReddit(self, topic):
             sub_r : str = rList[topic][random.randint(0, len(rList[topic])-1)]
             print(sub_r)
             sub = self.reddit.subreddit(sub_r)
@@ -59,14 +53,14 @@ class nsfw(object):
                 post = sub.random().url
                 print(post)
                 if (post == None):
-                    return self.get(topic)
+                    return self.getReddit(topic)
 
                 if self.__isImage(lk=post):
                     return post
                 else:
-                    return self.get(topic)
+                    return self.getReddit(topic)
             else:
-                return self.get(topic)
+                return self.getReddit(topic)
             
         def check(self):
             print(self.reddit.user.me())
@@ -77,21 +71,23 @@ class nsfw(object):
                     return True
             return False
 
-        # def sfw(self):
-        # def genshin(self):
-        # def overwatch(self):
-        # def cosplay(self):
-        # def overall(self)
-
         def handler(self, args : [] = ["standard"]):
             if len(args) < 1:
-                return self.get("standard")
+                return self.getReddit("standard")
             elif len(args) < 2:
                 if args[0]:
-                    for item in self.aliases.keys():
-                        if item == args[0]:
-                            return self.get(self.aliases[args[0]])
-                return self.get("standard")
+                    if args[0].lower() == "overall":
+                        return self.getReddit(self.aliases[list(self.aliases.keys())[random.randint(1, len(self.aliases.keys()))-1]])
+                    elif args[0].lower in list(self.aliases.keys()):
+                        for item in self.aliases.keys():
+                            if item == args[0]:
+                                return self.getReddit(self.aliases[args[0]])
+                    else:
+                        return self.getReddit("standard")
+                    
+                return self.getReddit("standard")
+            
+            return self.getReddit("standard")
 
         def __init__(self, duname : str, dapi : str, rid : str, rsec : str, rname : str, runame : str, rpass : str):
             if (duname and dapi and rid and rsec and rname and  runame and rpass):
@@ -103,7 +99,7 @@ class nsfw(object):
                     password=rpass)
 
 if __name__ == "__main__":
-    client = nsfw(
+    client = medias(
             duname=settings["Danbooru"]["username"],
             dapi=settings["Danbooru"]["api_key"],
             rid=settings["Reddit"]["id"],
