@@ -1,12 +1,14 @@
 import discord
 import asyncio
 
-async def say(message, args : []):
+
+
+async def say(message, args : list):
     repeatCount = 1
     content : str
 
     if not args or len(args) < 1:
-        message.channel.send("Can't dend empty message")
+        message.channel.send("Can't send empty message")
 
     if len(args) < 2:
         content = args[0]

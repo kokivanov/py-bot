@@ -1,12 +1,12 @@
 import discord
-from utils import cadmin, argsUtils, game_r, pingpong, medias
+from . import cadmin, argsUtils, game_r, pingpong, medias
 import asyncio
 import json
 import requests
+from . import config
 
 fl = open("usersettings.json")
 settings = json.loads(fl.read())
-
 
 async def handler(command: str, args: [], message: discord.Message, CONFIGS: dict, cl_medias: medias.medias) -> int:
     if CONFIGS["ENABLED_MODULES"]["GAME_R"]:
