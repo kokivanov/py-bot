@@ -7,7 +7,7 @@ class command(object):
 
     description : str
 
-    parameters : { str : parameter }
+    parameters : dict
 
     aliases : [str]
 
@@ -21,14 +21,14 @@ class command(object):
 
     command : None
 
-    def __init__(self, 
-            description : str, 
-            usage : str, 
-            parameters : { str : parameter }, 
-            aliases : [str], 
-            is_callable : bool, 
-            required_permissions : [str], 
-            channels_blacklist : [str], 
+    def __init__(self,
+            description : str,
+            usage : str,
+            parameters : dict,
+            aliases : [str],
+            is_callable : bool,
+            required_permissions : [str],
+            channels_blacklist : [str],
             roles_blacklist : [str],
             command
         ):
@@ -51,6 +51,7 @@ class command(object):
 
     # def set_permission(self, *args, **kwargs)
     # def set_aliases(self, *args, **kwargs)
+    # def set_availability(self, *args, **kwargs)
     # def set_channel_blacklist(self, *args, **kwargs)
     # def set_role_blacklist(self, *args, **kwargs)
 

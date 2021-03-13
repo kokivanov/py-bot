@@ -1,67 +1,51 @@
-import discord
+def parseArguments(content: str) -> []:
+    res = []
+    wrd = str()
+    state = int(0)
+    separator = str()
 
-def parseArguments(message, prefix: str) -> []:
-    args = message.content.split(" ")[len(prefix)-1:]
-    ind = []
-    splitter : str = ""
-    for i in message.content:
-        if i == "'" or i == '"':
-            splitter = i
-            break
-        
-    i: int = 0
-    if splitter:
-        for ar in args:
-            if len(ar) > 1 and ar[0] == splitter:
-                ind.append(i)
-            if len(ar) > 1 and ar[len(ar)-1] == splitter:
-                ind.append(i)
-            elif ar == splitter:
-                ind.append(i)
-            i += 1
-        del i
-    
-        last: bool = False
-        if len(ind) % 2 == 1:
-            ind.append(ind[len(ind)-1])
-            last = True
+    if len(content) < 2:
+        return [content]
 
-        ar_i: int = 0
-        ind_i: int = 0
-        newArgs = []
-        while (ar_i < len(args)):
-            if ind_i+1 <= len(ind) - 1 and ar_i < ind[ind_i]:
-                newArgs.append(args[ar_i])
-            else:
-                newArgs.append(args[ar_i])
-                if last and ind_i+1 == len(ind) - 1:
-                    for it in args[ind[ind_i]+1:]:
-                        newArgs[len(newArgs)-1] += " " + it
-                    break
+    for c in content:
+        if c == ' ':
+            if state == 0 or state == 1 or state == 4:
+                state = 1
+            elif state == 2:
+                res.append(wrd)
+                state = 1
+            elif state == 3:
+                wrd += c
+        elif c == '"' or c == "'":
+            if state == 0 or state == 1:
+                wrd = ""
+                sep = c
+                state = 3
+            elif state == 2:
+                res.append(wrd)
+                wrd = ""
+                sep = c
+                state = 3
+            elif state == 3:
+                if c == sep:
+                    res.append(wrd)
+                    state = 4
+                else:
+                    wrd += c
+            elif state == 4:
+                wrd = ""
+                sep = c
+                state = 3
+        else:
+            if state == 0 or state == 1 or state == 4:
+                wrd = ""
+                wrd += c
+                state = 2
+            elif state == 2 or state == 3:
+                wrd += c
 
-                if ind_i < len(ind)-1:
-                    for it in args[ind[ind_i]+1: ind[ind_i+1]+1]:
-                        newArgs[len(newArgs)-1] += " " + it
-                    ar_i += ind[ind_i+1] - ind[ind_i]
-                    ind_i += 2
-            ar_i += 1
-        args = newArgs
+    res.append(wrd)
+    return res
 
-        del ar_i
-        del ind_i
-        for item in args:
-            if splitter in item:
-                i = 0
-                for abc in args:
-                    if abc == item:
-                        break
-                    i += 1
-                args[i] = item.replace(splitter, "")
-
-    while '' in args:
-        args.remove('')
-
-    return args
-
-
-    
+if __name__ == "__main__":
+    print(parseArguments("Hello world! 'sdasd'sdsds sdasd asda '' asdas''sda s'sdsdsdsds"))

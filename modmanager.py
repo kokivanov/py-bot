@@ -6,13 +6,10 @@ def main():
 
     print(lst)
 
-    mods["ping"] = getattr(getattr(commands, "ping"), "ping")
-
-    # for i in lst:
-    #     if str(i).startswith("__"): continue
-    #     mods[str(i)] = getattr(getattr(utils, str(i)), str(i))
-    
-    mods["ping"]()
+    for l in lst:
+        if l.startswith("__"): continue
+        else:
+            mods[l] = getattr(getattr(commands, l), l)
 
     print(mods)
     pass

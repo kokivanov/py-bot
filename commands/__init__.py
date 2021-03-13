@@ -1,1 +1,1 @@
-from . import ping
+from . import ping, dice
