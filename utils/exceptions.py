@@ -45,8 +45,6 @@ class PermissionErr(ErrorTemplate):
     def __str__(self):
         return "{}Reqired permissions: {}\nHas permissions: {}\n".format(super().__str__(), self.required_premissions, self.has_permission)
 
-    pass
-
 class InvalidConfig(ErrorTemplate):
     pass
 
@@ -66,5 +64,3 @@ class InvalidParameter(ErrorTemplate):
             print("Invalid parameters: {}\n".format(ex.__cause__)) 
 
         super().__init__(*args, **kwargs)
-
-    pass

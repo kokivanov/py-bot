@@ -1,1 +1,1 @@
-from . import commandtemplate, configmanager, databasemanager, exceptions, argumentparser
+from . import commandtemplate, configmanager, databasemanager, exceptions, argumentparser, logger
