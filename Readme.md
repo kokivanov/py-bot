@@ -15,13 +15,14 @@
   - [ ] fighting
   - [ ] inventory
 - [ ] Useful utils
-  - [ ] Kick, ban, tempban, tempmute, mute
+  - [ ] Kick, ban, temp ban, temp mute, mute
   - [X] Clear
   - [ ] Logs
   - [ ] Chat filter
-  - [ ] Rolereact
+  - [ ] Role react
   - [ ] Reminders
   - [ ] Announces
+  - [ ] Warns
 - [ ] Entertainment
   - [ ] Different reactions for each one command
   - [ ] Images

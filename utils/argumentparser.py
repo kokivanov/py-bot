@@ -13,6 +13,7 @@ def parse(content : str) -> list:
                 state = 1
             elif state == 2:
                 res.append(wrd)
+                wrd = ""
                 state = 1
             elif state == 3:
                 wrd += c
@@ -29,6 +30,7 @@ def parse(content : str) -> list:
             elif state == 3:
                 if c == sep:
                     res.append(wrd)
+                    wrd = ""
                     state = 4
                 else:
                     wrd += c
@@ -44,5 +46,17 @@ def parse(content : str) -> list:
             elif state == 2 or state == 3:
                 wrd += c
 
-    res.append(wrd)
+    if wrd != "":
+        res.append(wrd)
+        wrd = ""
+
+    while ' ' in res:
+        res.remove(' ')
+
+    while '' in res:
+        res.remove('')
+
+    while None in res:
+        res.remove(None)
+
     return res

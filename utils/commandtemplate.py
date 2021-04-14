@@ -1,13 +1,6 @@
 import asyncio
 import json
 
-if __name__ == '__main__':
-    from exceptions import *
-    import types
-else:
-    from .exceptions import *
-
-
 class commandtemplate(object):
     name = ''
     description = ''
@@ -52,6 +45,19 @@ class commandtemplate(object):
             self.channels_blacklist = kwargs.get('channels_blacklist')
             self.roles_blacklist = kwargs.get('roles_blacklist')
             self.command = kwargs.get('command')
+
+            if self.parameters != None and isinstance(self.parameters, dict):
+                for k, v in self.parameters.items():
+                    if not isinstance(v, bool):
+                        raise TypeError('Required bool as value')
+                    if not isinstance(k, str):
+                        raise TypeError('Required str as key')
+
+                    if v == True:
+                        self.usage += ' [{}]'.format(k)
+                    elif v is False:
+                        self.usage += ' <{}>'.format(k)
+
         except KeyError:
             print("Can't recognize some parameters.")
         except TypeError as e:
@@ -92,6 +98,7 @@ class commandtemplate(object):
         except KeyError:
             raise ValueError("Invalid or corrupted config string")
 
+    # Gets command parameters as json string
     def load_parameters(self, p):
         par = json.loads(p)
         try:
@@ -107,6 +114,7 @@ class commandtemplate(object):
         except KeyError:
             raise ValueError("Invalid or corrupted config string")
 
+    # Returns command parameters as json string
     def get_parameters(self):
         params = json.dumps({
             "name": self.name,
@@ -122,9 +130,11 @@ class commandtemplate(object):
 
         return params
 
+    # Returns command name and descriprion as string
     def __str__(self):
         return "Command {}, {}".format(self.name, self.description)
 
+    # ======================================== Functions to manipulate permissions ============================================================
     def set_permissions(self, *args, **kwargs):
         if len(args) < 1 or '' in args:
             raise ValueError("Can't append no parameters")
@@ -134,6 +144,7 @@ class commandtemplate(object):
                     self.__class__.__name__), has_param=args, required_param=["any amount of str"], msg="Incorrect parameters")
 
         self.required_permissions = args
+
 
     def add_permissions(self, *args, **kwargs):
         if len(args) < 1 or '' in args:
@@ -164,6 +175,7 @@ class commandtemplate(object):
     def prune_permissions(self, *args, **kwargs):
         self.required_permissions.clear()
 
+    # ======================================== Functions to manipulate aliases ============================================================
     def set_aliases(self, *args, **kwargs):
         if len(args) < 1 or '' in args:
             raise ValueError("Can't append no parameters")
@@ -203,6 +215,7 @@ class commandtemplate(object):
     def prune_aliases(self, *args, **kwargs):
         self.aliases.clear()
 
+    # ======================================== Functions to manipulate availability ============================================================
     def set_availability(self, *args, **kwargs):
         if len(args) >= 1 and isinstance(args[0], bool):
             self.is_callable = args[0]
@@ -210,6 +223,7 @@ class commandtemplate(object):
     def change_availability(self, *args, **kwargs):
         self.is_callable ^= True
 
+    # ======================================== Functions to manipulate channel blacklist ============================================================
     def set_channels_blacklist(self, *args, **kwargs):
         if len(args) < 1 or '' in args:
             raise ValueError("Can't append no parameters")
@@ -222,7 +236,7 @@ class commandtemplate(object):
 
     def add_channels_blacklist(self, *args, **kwargs):
         if len(args) < 1 or '' in args:
-            raise ValueError("Can't append no parameters")
+            raise ValueError("Can't void parameter(s)")
         for i in args:
             if isinstance(i, str):
                 if i in self.channels_blacklist:
@@ -249,6 +263,7 @@ class commandtemplate(object):
     def prune_channels_blacklist(self, *args, **kwargs):
         self.channels_blacklist.clear()
 
+    # ======================================== Functions to manipulate roles blacklist ============================================================
     def set_roles_blacklist(self, *args, **kwargs):
         if len(args) < 1 or '' in args:
             raise ValueError("Can't append no parameters")
@@ -287,24 +302,3 @@ class commandtemplate(object):
 
     def prune_roles_blacklist(self, *args, **kwargs):
         self.roles_blacklist.clear()
-
-
-def main():
-    cmd = commandtemplate(
-        name='test',
-        description='test',
-        usage="a-test",
-        parameters={'Test': False},
-        aliases=[],
-        is_callable=True,
-        required_permissions=[],
-        channels_blacklist=[],
-        roles_blacklist=[],
-        command=None
-    )
-
-
-if __name__ == '__main__':
-    main()
-
-    print("Hi!")

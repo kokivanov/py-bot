@@ -23,12 +23,10 @@ async def on_ready():
 @client.event
 async def on_message(message):
 
-    print(message.author.avatar_url)
-
     print(str(message.created_at) +
           "=> Message from {0.author} at channel  #{0.channel} : {0.content}".format(message))
 
-    if message.author == client.user.bot or message.author == message.guild.me:
+    if message.author is client.user.bot or message.author == message.guild.me:
         return
 
 # Main body of bot
@@ -36,4 +34,4 @@ async def on_message(message):
         
         await help.help(message=message, config = CONFIGS, c_args=[])
 
-client.run(CONFIGS["TOKEN"])
+client.run(CONFIGS["token"])

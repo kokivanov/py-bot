@@ -8,8 +8,15 @@ class ErrorTemplate(Exception):
     def __init__(self, *args, **kwargs):
         self.errorTime = datetime.datetime.now()
         self.errorHash = hash(self.errorTime)
+        
         try:
             self.command = kwargs.get('command')
+        except KeyError:
+            pass
+        finally:
+            pass
+
+        try:
             super().__init__(kwargs.get("msg"))
         except KeyError:
             raise Exception("Must specify a message")
@@ -37,11 +44,13 @@ class PermissionErr(ErrorTemplate):
     has_permission = []
 
     def __init__(self, *args, **kwargs):
-        self.required_premissions = kwargs['required_premissions']
-        self.required_premissions = kwargs['has_premissions']
-
+        try:
+            self.required_premissions = kwargs['required_premissions']
+            self.required_premissions = kwargs['has_premissions']
+        except KeyError:
+            print("")
+        
         super().__init__(*args, **kwargs)
-
     def __str__(self):
         return "{}Reqired permissions: {}\nHas permissions: {}\n".format(super().__str__(), self.required_premissions, self.has_permission)
 
@@ -64,3 +73,5 @@ class InvalidParameter(ErrorTemplate):
             print("Invalid parameters: {}\n".format(ex.__cause__)) 
 
         super().__init__(*args, **kwargs)
+
+class VoidError(ErrorTemplate): ...
