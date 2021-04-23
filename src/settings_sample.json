@@ -1,0 +1,18 @@
+{
+
+    "TOKEN" : "",
+    "PREFIX" : "",
+    "BOTNAME" : "",
+    "ENABLED_MODULES" : {
+        "HI_MESSAGE" : true,
+        "PING" : true,
+        "GAME_R" : true,
+        "SUDO" : true,
+        "ADMUTILS" : true
+    },
+
+    "HI_MESSAGE" : {
+        "REACTION" : ""
+    }
+
+}

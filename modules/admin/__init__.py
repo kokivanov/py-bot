@@ -1,2 +1,0 @@
-from . import clear, say
-
