@@ -13,7 +13,7 @@ def ltos(lst):
     s = ', '.join(format_list)
     return s.format(*lst)
 
-async def fn_help(message, config, c_args, *args, **kwargs):
+async def fn_help(message, config, parent, *args, **kwargs):
     availableCommands = {getattr(getattr(commands, i), i).name : getattr(getattr(commands, i), i) for i in dir(commands) if not i.startswith("__")}
 
     availableModules = {}
@@ -55,7 +55,6 @@ async def fn_help(message, config, c_args, *args, **kwargs):
 help = commandtemplate.commandtemplate(
     name= 'help',
     description= 'Provides help for command or module',
-    usage='*prf*help',
     parameters={'command/module' : False, "cmd_in_mod" : False},
     aliases=None,
     is_callable=True,

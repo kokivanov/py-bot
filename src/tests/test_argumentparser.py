@@ -5,76 +5,109 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from utils import argumentparser
 from utils import exceptions
+from utils.abc import userRequestHandler
+
+from __utils import cfg
 
 class TestArgumetParser(unittest.TestCase):
 
     def test_ParserSimple(self):
-        result = argumentparser.parse("a b c")
-        expect = ["a", "b", "c"]
-        self.assertEqual(result, expect)
+        config = cfg()
+
+        raw = "t-test first secound -f=1 --secound=2 -t --fourth -e=True"
+        expecting = userRequestHandler(command='test', args=["first", "secound"], flags={"f" : "1", "secound" : "2", "t" : None, "fourth" : None, "e" : "True"})
+        result = argumentparser.parse(raw=raw, config=config)
+
+        self.assertEqual(result, expecting)
+
+        raw = "t-test.test first secound -f=1 --secound=2 -t --fourth -e=True"
+        expecting = userRequestHandler(command='test.test', args=["first", "secound"], flags={"f" : "1", "secound" : "2", "t" : None, "fourth" : None, "e" : "True"})
+        result = argumentparser.parse(raw=raw, config=config)
+
+        self.assertEqual(result, expecting)
 
     def test_ParserQuotes(self):
-        result = argumentparser.parse("\"Hello world!\" Hello planet!")
-        expect = ["Hello world!", "Hello", "planet!"]
-        self.assertEqual(result, expect)
-        
-        result = argumentparser.parse("'Hello world!' Hello planet!")
-        expect = ["Hello world!", "Hello", "planet!"]
-        self.assertEqual(result, expect)
+        config = cfg()
 
-        result = argumentparser.parse("Hello world! \"Hello planet!\"")
-        expect = ["Hello", "world!", "Hello planet!"]
-        self.assertEqual(result, expect)
-        
-        result = argumentparser.parse("Hello world! 'Hello planet!'")
-        expect = ["Hello", "world!", "Hello planet!"]
-        self.assertEqual(result, expect)
+        raw = "t-test \"first secound\" third -f=1 --secound=2 -t --fourth -e=True -G=\"Mingw Makefile\" --query=\"Raphtalia shield hero\""
+        expecting = userRequestHandler(command='test', args=["first secound", "third"], flags={"f" : "1", "secound" : "2", "t" : None, "fourth" : None, "e" : "True", "G" : "Mingw Makefile", "query" : "Raphtalia shield hero"})
+        result = argumentparser.parse(raw=raw, config=config)
 
-        result = argumentparser.parse("Hell\"o w\"orld! \"Hello planet!\"")
-        expect = ["Hell\"o", "w\"orld!", "Hello planet!"]
-        self.assertEqual(result, expect)
+        self.assertEqual(result, expecting)
         
-        result = argumentparser.parse("Hell'o w'orld! \"Hello planet!\"")
-        expect = ["Hell'o", "w'orld!", "Hello planet!"]
-        self.assertEqual(result, expect)
-        
+        raw = "t-test \'first secound\' third -f=1 --secound=2 -t --fourth -e=True -G=\'Mingw Makefile\' --query=\'Raphtalia shield hero\'"
+        expecting = userRequestHandler(command='test', args=["first secound", "third"], flags={"f" : "1", "secound" : "2", "t" : None, "fourth" : None, "e" : "True", "G" : "Mingw Makefile", "query" : "Raphtalia shield hero"})
+        result = argumentparser.parse(raw=raw, config=config)
+
+        self.assertEqual(result, expecting)
+
     def test_ParserOddQuotes(self):
-        result = argumentparser.parse("\"Hello world!\" \"Hello planet!")
-        expect = ["Hello world!", "Hello planet!"]
-        self.assertEqual(result, expect)
-        
-        result = argumentparser.parse("'Hello world!' 'Hello planet!")
-        expect = ["Hello world!", "Hello planet!"]
-        self.assertEqual(result, expect)
+        config = cfg()
 
-        result = argumentparser.parse("'Hello world!' Hel'lo planet!")
-        expect = ["Hello world!", "Hel'lo", "planet!"]
-        self.assertEqual(result, expect)
+        raw = "t-test \"first secound\" third -f=1 --secound=2 -t --fourth -e=True -G=\"Mingw Makefile\" --query='Raphtalia shield hero' \"hello there"
+        expecting = userRequestHandler(command='test', args=["first secound", "third", "hello there"], flags={"f" : "1", "secound" : "2", "t" : None, "fourth" : None, "e" : "True", "G" : "Mingw Makefile", "query" : "Raphtalia shield hero"})
+        result = argumentparser.parse(raw=raw, config=config)
 
-        result = argumentparser.parse("\"Hello world!\" Hel\"lo planet!")
-        expect = ["Hello world!", "Hel\"lo", "planet!"]
-        self.assertEqual(result, expect)
+        self.assertEqual(result, expecting)
+
+        raw = "t-test \'first secound\' third -f=1 --secound=2 -t --fourth -e=True -G=\'Mingw Makefile\' --query='Raphtalia shield hero' \'hello there"
+        expecting = userRequestHandler(command='test', args=["first secound", "third", "hello there"], flags={"f" : "1", "secound" : "2", "t" : None, "fourth" : None, "e" : "True", "G" : "Mingw Makefile", "query" : "Raphtalia shield hero"})
+        result = argumentparser.parse(raw=raw, config=config)
+
+        self.assertEqual(result, expecting)
+
+        raw = "t-test \"first secound\" third -f=1 --secound=2 -t --fourth -e=True -G=\"Mingw Makefile\" --query=\"Raphtalia shield hero\" \"hello there"
+        expecting = userRequestHandler(command='test', args=["first secound", "third", "hello there"], flags={"f" : "1", "secound" : "2", "t" : None, "fourth" : None, "e" : "True", "G" : "Mingw Makefile", "query" : "Raphtalia shield hero"})
+        result = argumentparser.parse(raw=raw, config=config)
+
+        self.assertEqual(result, expecting)
 
     def test_ParserMultipleQuotesSimple(self):
-        result = argumentparser.parse("\"Hello world!\" 'Hello planet!'")
-        expect = ["Hello world!", "Hello planet!"]
-        self.assertEqual(result, expect)
+        config = cfg()
 
-        result = argumentparser.parse("\"Hello world!\" He'llo p'lanet!")
-        expect = ["Hello world!", "He'llo", "p'lanet!"]
-        self.assertEqual(result, expect)
+        raw = "t-test 'first' \"secound\" third -f=1 --secound=2 -t --fourth -e=True -G=\"Mingw Makefile\" --query='Raphtalia shield hero' \"hello there'"
+        expecting = userRequestHandler(command='test', args=["first", "secound", "third", "hello there'"], flags={"f" : "1", "secound" : "2", "t" : None, "fourth" : None, "e" : "True", "G" : "Mingw Makefile", "query" : "Raphtalia shield hero"})
+        result = argumentparser.parse(raw=raw, config=config)
+
+        self.assertEqual(result, expecting)
+
+    def test_ParserPunct(self):
+        config = cfg()
+
+        raw = "t-test 'fi.rst' \"seco.und\" thi.rd -f=1 --secound=\'2!\' -t --fourth -e=True -G=\"Mingw Makefile\" --query='Raphtalia! shield: hero' \"hello !.there'"
+        expecting = userRequestHandler(command='test', args=["fi.rst", "seco.und", "thi.rd", "hello !.there'"], flags={"f" : "1", "secound" : "2!", "t" : None, "fourth" : None, "e" : "True", "G" : "Mingw Makefile", "query" : "Raphtalia! shield: hero"})
+        result = argumentparser.parse(raw=raw, config=config)
+
+        self.assertEqual(result, expecting)
+
+    def test_ParserQuotesInQuotes(self):
+        config = cfg()
+
+        raw = "t-test '\\\"' '\\'' -q='\"' -t=\"'\""
+        expecting = userRequestHandler(command='test', args=["\"", "'"], flags={"q" : "\"", "t" : "\'"})
+        result = argumentparser.parse(raw=raw, config=config)
+
+        self.assertEqual(result, expecting)
+
 
     def test_ParserMultipleOddQuotes(self):
+        config = cfg()
+
         with self.assertRaises(exceptions.InputError) as exception:
-            argumentparser.parse("\"Hello 'world!'\" 'Hel'lo \"planet!\"'")
+            raw = "t-test 'fi.rst' \"seco.und\"\' thi.rd -f=1 --secound=\'2!\' -t --fourth -e=True -G=\"Mingw Makefile\" --query='Raphtalia! shield: hero' \"hello !.there'"
+            result = argumentparser.parse(raw=raw, config=config)
 
-    def test_ParserExceptions(self):
-        try:
-            result = argumentparser.parse("say \"Lorem in the bath so I\'ll take over her duty\" \"10\" '\\@datak\\#1232\"\"\" kek w")
-        except exceptions.InputError as e:
-            print(e, e.index)
+    def test_ParserException(self):
+        config = cfg()
 
-        try:
-            result = argumentparser.parse("\"asda #\"")
-        except exceptions.InputError as e:
-            print(e, e.index)        
+        with self.assertRaises(exceptions.InputError) as exception:
+            raw = "t-test -query"
+            result = argumentparser.parse(raw=raw, config=config)
+
+        with self.assertRaises(exceptions.InputError) as exception:
+            raw = "t-test --query= "
+            result = argumentparser.parse(raw=raw, config=config)
+
+        with self.assertRaises(exceptions.InputError) as exception:
+            raw = "t-test '♥'"
+            result = argumentparser.parse(raw=raw, config=config)

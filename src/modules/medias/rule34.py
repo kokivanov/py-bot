@@ -13,10 +13,11 @@ rule34 = commandtemplate(
     description= 'desc',
     usage='*prf*rule34',
     parameters=None,
-    aliases=None,
+    aliases=["rule34", "r34"],
     is_callable=True,
     required_permissions=None,
     channels_blacklist=None,
     roles_blacklist=None,
-    command=fn_rule34
+    command=fn_rule34,
+    custom_parameters={"nsfw_allowed" : False}
 )

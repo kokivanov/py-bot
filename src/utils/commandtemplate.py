@@ -1,85 +1,33 @@
 import asyncio
 import json
+from .abc import commandParameters
 
-class commandtemplate(object):
-    name = ''
-    description = ''
-    usage = ''
-    parameters = {}
-    aliases = []
-    is_callable = True
-    required_permissions = []
-    channels_blacklist = []
-    roles_blacklist = []
+class commandtemplate(commandParameters):
+    """
+        Basic class of command, every instance of it is a command that can be called from discord
 
-    command = None
+        Reqired argumets to initialize:
+            name = str() # name of the command, can be called by it
+            description = str()
 
-    def __init__(self, *args, **kwargs):
-        
-        try:
-        # set parameters
-            try:
-                self.name = str(kwargs.get('name'))
-            except KeyError as e:
-                print ("Missing {} key\n".format(e))
-                return
+    """
 
-            try:
-                self.description = str(kwargs.get('description'))
-            except KeyError as e:
-                print ("Missing {} key\n".format(e))
-                return
+    def __init__(self, command, name : str, description : str = "Command that can do something, no description provided", are_flags_enabled : bool = False, parameters : dict = {}, aliases : list = [], is_callable : bool = True, required_permissions : list = [], channels_blacklist : list = [], roles_blacklist : list = [], is_custom = True, custom_parameters : dict = {}, *args, **kwargs):
+        self.name = name
+        self.description = description
+        self.are_flags_enabled = are_flags_enabled
+        self.command = command
+        self.parameters = parameters
+        self.aliases = aliases
+        self.is_callable = is_callable
+        self.required_permissions = required_permissions
+        self.channels_blacklist = channels_blacklist
+        self.roles_blacklist = roles_blacklist
+        self.is_custom = is_custom
 
-            try:
-                self.usage = str(kwargs.get("usage"))
-            except KeyError as e:
-                print ("Missing {} key\n".format(e))
-                return
+        self.custom_parameters = custom_parameters
 
-            try:
-                self.parameters = (kwargs.get('parameters'))
-            except KeyError as e:
-                print ("Missing {} key\n".format(e))
-                self.parameters = None
-
-            try:
-                self.aliases = (kwargs.get('aliases'))
-            except KeyError as e:
-                print ("Missing {} key\n".format(e))
-                self.aliases = None
-
-            try:
-                self.is_callable = (kwargs.get('is_callable'))
-            except KeyError as e:
-                print ("Missing {} key\n".format(e))
-                return
-
-            try:
-                self.required_permissions = (kwargs.get('required_permissions'))
-            except KeyError as e:
-                print ("Missing {} key\n".format(e))
-                self.required_permissions = None
-
-            try:
-                self.channels_blacklist = (kwargs.get('channels_blacklist'))
-            except KeyError as e:
-                print ("Missing {} key\n".format(e))
-                self.channels_blacklist = None
-
-            try:
-                self.roles_blacklist = (kwargs.get('roles_blacklist'))
-            except KeyError as e:
-                print ("Missing {} key\n".format(e))
-                self.roles_blacklist = None
-
-            try:
-                self.command = kwargs.get('command')
-            except KeyError as e:
-                print ("Missing {} key\n".format(e))
-                return
-        
-        except TypeError as e:
-            print (e)
+        self.usage = "*prf*{}".format(self.name)
 
         try:
             for k, v in self.parameters.items():
@@ -87,12 +35,12 @@ class commandtemplate(object):
                     self.usage += ' [{}]'.format(str(k))
                 elif bool(v) is False:
                     self.usage += ' <{}>'.format(str(k))
-        except TypeError as e:
-            print (e)
+        except AttributeError:
+            self.parameters = None
 
-    async def __call__(self, message, config, c_args, *args, **kwargs):
+    async def __call__(self, message, config, *args, **kwargs):
         try:
-            await self.command(message, config, c_args, *args, **kwargs)
+            await self.command(message, config, parent=self, *args, **kwargs)
         except TypeError as e:
             print(e)
 
@@ -110,7 +58,6 @@ class commandtemplate(object):
                     self.__class__.__name__), has_param=args, required_param=["any amount of str"], msg="Incorrect parameters")
 
         self.required_permissions = args
-
 
     def _add_permissions(self, *args, **kwargs):
         if len(args) < 1 or '' in args:
@@ -268,3 +215,35 @@ class commandtemplate(object):
 
     def _prune_roles_blacklist(self, *args, **kwargs):
         self.roles_blacklist.clear()
+
+    # =========================================== Import parameters fields class abc.commandParameters =================================
+
+    def __lshift__(self, item: commandParameters):
+        try:
+            self.aliases = item.aliases
+            self.is_callable = item.is_callable
+            self.required_permissions = item.required_permissions
+            self.channels_blacklist = item.channels_blacklist
+            self.roles_blacklist = item.roles_blacklist
+        except AttributeError as e:
+            self.aliases = []
+            self.is_callable = True
+            self.required_permissions = []
+            self.channels_blacklist = []
+            self.roles_blacklist = []
+            raise ValueError("Asigning incorrect type, misssing {}".format(e))
+
+    def __eq__(self, item: commandParameters):
+        try:
+            self.aliases = item.aliases
+            self.is_callable = item.is_callable
+            self.required_permissions = item.required_permissions
+            self.channels_blacklist = item.channels_blacklist
+            self.roles_blacklist = item.roles_blacklist
+        except AttributeError as e:
+            self.aliases = []
+            self.is_callable = True
+            self.required_permissions = []
+            self.channels_blacklist = []
+            self.roles_blacklist = []
+            raise ValueError("Asigning incorrect type, misssing {}".format(e))

@@ -5,7 +5,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from utils import abc
 
-class UserRequestHandler(unittest.TestCase):
+class TestUserRequestHandler(unittest.TestCase):
     
     def testInitCorrect(self):
         command = "say"

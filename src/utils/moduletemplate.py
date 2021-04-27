@@ -1,51 +1,33 @@
-from . import commandtemplate
-from types import ModuleType
+from .commandtemplate import commandtemplate
+from .abc import commandParameters
 
-class moduletemplate():
-    name = str()
-    description = str()
-    required_permissions = list()
-    channels_blacklist = list()
-    roles_blacklist = list()
+class moduletemplate(object):
+    """
+        Class that is each bot's module inhibited from
 
-    commands = dict()
+        Reuires to initialize:
+            name : str # name of the module
+            commands : commandParameters # list of imported cammands that inhibited from commandtemplate
+    """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self,name, commands : list[commandtemplate], roles_blacklist : list = [], channels_blacklist : list = [], description="Module tah holds some commands and shares parameters with them", required_permissions : list = [], *args, **kwargs):
+        self.name = name
+        self.roles_blacklist = roles_blacklist
+        self.channels_blacklist = channels_blacklist
+        self.description = description
+        self.required_permissions = required_permissions
+
+        self.command_list = {}
+
         try:
-            
-            try:
-                self.name = str(kwargs.get('name'))
-            except KeyError as e:
-                print ("Missing {} key\n".format(e))
-
-            try:
-                self.description = str(kwargs.get('description'))
-            except KeyError as e:
-                print ("Missing {} key\n".format(e))
-
-            try:
-                self.required_permissions = (kwargs.get('required_permissions'))
-            except KeyError as e:
-                print ("Missing {} key\n".format(e))
-
-            try:
-                self.channels_blacklist = (kwargs.get('channels_blacklist'))
-            except KeyError as e:
-                print ("Missing {} key\n".format(e))
-
-            try:
-                self.roles_blacklist = (kwargs.get('roles_blacklist'))
-            except KeyError as e:
-                print ("Missing {} key\n".format(e))
-
-            for i in kwargs.get('commands'):
-                if not isinstance(i, ModuleType): raise TypeError("{} is not a module".format(str(i.__name__)))
+            for i in commands:
+                if not isinstance(i, commandtemplate): raise TypeError("{} is not a command instance".format(str(i.__class__.__name__)))
                 else: 
-                    name = str(i.__name__).split(".")[-1]
-                    self.commands[name] = getattr(i, name)
-
+                    self.command_list[i.name] = i
         except TypeError as e:
             print("Invalid parameters provided: {}".format(e))
+
+        super().__init__()
 
     # Returns module config as json string
     def __invert__(self):

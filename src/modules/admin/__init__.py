@@ -6,13 +6,11 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from utils.moduletemplate import moduletemplate
 
 admin=moduletemplate(
-    commands = [clear, say],
+    commands = [clear.clear, say.say],
     name= 'admin',
-    description= 'Provides help for command or module',
-    required_permissions=None,
+    description= 'Provides administrative utilites',
+    required_permissions=["%admin", "%moderator"],
     channels_blacklist=None,
     roles_blacklist=None,
     command=None
 )
-
-print (admin.commands)
