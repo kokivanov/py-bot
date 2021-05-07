@@ -1,10 +1,14 @@
+from . import abc
+from . import databasemanager
+
 class cfg:
     prefix : str
-    server_ID : str
-    func_setup : dict
-    mod_setup : dict
+    owner_ID : str
 
-    def __init__(self, *args, **kwargs): ...
+    def __init__(self, server_ID : abc.server_id):
+        self.server_ID = server_ID
+
+
 
     # Will try to get parameters using __getCmdParams and __getModParams
     def getParameter(self, *args, **kwargs): ...

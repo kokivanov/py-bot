@@ -1,7 +1,13 @@
 import asyncio
 import json
-from .abc import commandParameters
 
+from .abc import commandParameters
+from .abc import userRequestHandler
+import dataclasses as ds
+import typing
+import discord
+
+@ds.dataclass
 class commandtemplate(commandParameters):
     """
         Basic class of command, every instance of it is a command that can be called from discord
@@ -12,31 +18,27 @@ class commandtemplate(commandParameters):
 
     """
 
-    def __init__(self, command, name : str, description : str = "Command that can do something, no description provided", are_flags_enabled : bool = False, parameters : dict = {}, aliases : list = [], is_callable : bool = True, required_permissions : list = [], channels_blacklist : list = [], roles_blacklist : list = [], is_custom = True, custom_parameters : dict = {}, *args, **kwargs):
-        self.name = name
-        self.description = description
-        self.are_flags_enabled = are_flags_enabled
-        self.command = command
-        self.parameters = parameters
-        self.aliases = aliases
-        self.is_callable = is_callable
-        self.required_permissions = required_permissions
-        self.channels_blacklist = channels_blacklist
-        self.roles_blacklist = roles_blacklist
-        self.is_custom = is_custom
+    name : str = ds.field(default_factory=str)
+    description : str = ds.field(default_factory=str)
+    are_flags_enabled : bool = ds.field(default_factory=bool)
+    command : typing.Callable = ds.field(default_factory=typing.Callable[[discord.Message, userRequestHandler, ...], discord.Message])
+    parameters : dict = ds.field(default=None)
+    custom_parameters : dict = ds.field(default_factory=dict)
+    usage : str = ds.field(default="", init=False)
+    default_parameters : commandParameters = ds.field(default_factory=commandParameters, init=False)
 
-        self.custom_parameters = custom_parameters
-
-        self.usage = "*prf*{}".format(self.name)
-
+    def __post_init__(cls):
+        cls.usage = "*prf*{}".format(object.__getattribute__(cls, "name"))
+        cls.default_parameters = commandParameters.copy(cls)
+        
         try:
-            for k, v in self.parameters.items():
+            for k, v in object.__getattribute__(cls, "parameters").items():
                 if bool(v) == True:
-                    self.usage += ' [{}]'.format(str(k))
+                    cls.usage += ' [{}]'.format(str(k))
                 elif bool(v) is False:
-                    self.usage += ' <{}>'.format(str(k))
+                    cls.usage += ' <{}>'.format(str(k))
         except AttributeError:
-            self.parameters = None
+            cls.parameters = None
 
     async def __call__(self, message, config, *args, **kwargs):
         try:
@@ -133,7 +135,10 @@ class commandtemplate(commandParameters):
         if len(args) >= 1 and isinstance(args[0], bool):
             self.is_callable = args[0]
 
-    def _change_availability(self, *args, **kwargs):
+    def _change_availability(self):
+        self.is_callable ^= True
+
+    def __invert__(self):
         self.is_callable ^= True
 
     # ======================================== Functions to manipulate channel blacklist ============================================================
@@ -216,34 +221,87 @@ class commandtemplate(commandParameters):
     def _prune_roles_blacklist(self, *args, **kwargs):
         self.roles_blacklist.clear()
 
+
     # =========================================== Import parameters fields class abc.commandParameters =================================
 
     def __lshift__(self, item: commandParameters):
+        """
+            Allows to import parameters from a commandParameters class
+        """
         try:
             self.aliases = item.aliases
             self.is_callable = item.is_callable
             self.required_permissions = item.required_permissions
             self.channels_blacklist = item.channels_blacklist
             self.roles_blacklist = item.roles_blacklist
+            self.custom_parameters = item.custom_parameters
         except AttributeError as e:
             self.aliases = []
             self.is_callable = True
             self.required_permissions = []
             self.channels_blacklist = []
             self.roles_blacklist = []
+            self.custom_parameters = {}
             raise ValueError("Asigning incorrect type, misssing {}".format(e))
 
-    def __eq__(self, item: commandParameters):
+    # def __eq__(self, item: commandParameters):
+    #     try:
+    #         self.aliases = item.aliases
+    #         self.is_callable = item.is_callable
+    #         self.required_permissions = item.required_permissions
+    #         self.channels_blacklist = item.channels_blacklist
+    #         self.roles_blacklist = item.roles_blacklist
+    #         self.custom_parameters = item.custom_parameters
+    #     except AttributeError as e:
+    #         self.aliases = []
+    #         self.is_callable = True
+    #         self.required_permissions = []
+    #         self.channels_blacklist = []
+    #         self.roles_blacklist = []
+    #         self.custom_parameters = {}
+    #         raise ValueError("Asigning incorrect type, misssing {}".format(e))
+
+    # updates command if it is related to module 
+    def update_r(values : commandParameters) -> None:
+        """
+            Used in moduletemplate to update related commands, works only if command isn't custom 
+        """
+        if self.is_custom: return
+
         try:
-            self.aliases = item.aliases
-            self.is_callable = item.is_callable
-            self.required_permissions = item.required_permissions
-            self.channels_blacklist = item.channels_blacklist
-            self.roles_blacklist = item.roles_blacklist
+            if values.aliases != None:
+                self.aliases = values.aliases
         except AttributeError as e:
-            self.aliases = []
-            self.is_callable = True
-            self.required_permissions = []
-            self.channels_blacklist = []
-            self.roles_blacklist = []
-            raise ValueError("Asigning incorrect type, misssing {}".format(e))
+            raise ValueError("Invalid parameter given: {}".format(e))
+
+        try:
+            if values.is_callable != None:
+                self.is_callable = values.is_callable
+        except AttributeError as e:
+            raise ValueError("Invalid parameter given: {}".format(e))
+
+        try:
+            if values.required_permissions != None:
+                self.required_permissions = values.required_permissions
+        except AttributeError as e:
+            raise ValueError("Invalid parameter given: {}".format(e))
+
+        try:
+            if values.channels_blacklist != None:
+                self.channels_blacklist = values.channels_blacklist
+        except AttributeError as e:
+            raise ValueError("Invalid parameter given: {}".format(e))
+
+        try:
+            if values.roles_blacklist != None:
+                self.roles_blacklist = values.roles_blacklist
+        except AttributeError as e:
+            raise ValueError("Invalid parameter given: {}".format(e))
+        
+        try:
+            if values.custom_parameters != None:
+                self.custom_parameters = values.custom_parameters
+        except AttributeError as e:
+            raise ValueError("Invalid parameter given: {}".format(e))
+
+    def update(self, values=commandParameters):...

@@ -5,8 +5,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from utils import abc
 from utils import exceptions
+from utils import commandtemplate
 
-class TestABC(unittest.TestCase):
+class test_commandParameters(unittest.TestCase):
 
     def test_commandParametersClass(self):
         res = abc.commandParameters(aliases=["rt", "tts"], is_callable=False, required_permissions=["@admin", "@moderator"], channels_blacklist=["163216456465465"], roles_blacklist=[])
@@ -38,4 +39,22 @@ class TestABC(unittest.TestCase):
     def test_commandParametersInvert(self):
         m1 = abc.commandParameters(aliases=["rt", "tts"], is_callable=False, required_permissions=["@admin", "@moderator"], channels_blacklist=["163216456465465"], roles_blacklist=[])
 
-        self.assertTrue((~m1).is_callable)
+        self.assertTrue(~m1)
+
+    def test_commandParametersFromInstance(self):
+        m1 = abc.commandParameters(aliases=["rt", "tts"], is_callable=False, required_permissions=["@admin", "@moderator"], channels_blacklist=["163216456465465"], roles_blacklist=[])
+        m2 = abc.commandParameters.copy(m1)
+
+        self.assertEqual(m1, m2)
+
+    def test_commandParametersSetAndCommandTemplate(self):
+        m1 = abc.commandParameters(aliases=["rt", "tts"], is_callable=False, required_permissions=["@admin", "@moderator"], channels_blacklist=["163216456465465"], roles_blacklist=[])
+        cmd = commandtemplate.commandtemplate(name="here we are", command=None)
+
+        m1=cmd
+        
+        self.assertEqual(m1, cmd)
+        self.assertEqual(cmd.name, "here we are")
+        self.assertIsInstance(m1, abc.commandParameters)
+        self.assertIsInstance(cmd, commandtemplate.commandtemplate)
+

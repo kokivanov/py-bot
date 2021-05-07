@@ -11,6 +11,5 @@ medias= moduletemplate(
     description= 'Provides entertaining utilites',
     required_permissions=None,
     channels_blacklist=None,
-    roles_blacklist=None,
-    command=None
+    roles_blacklist=None
 )

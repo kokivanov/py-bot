@@ -30,6 +30,11 @@ class TestUserRequestHandler(unittest.TestCase):
 
         del test
 
+        test1 = abc.userRequestHandler(command, args, flags)
+        test2 = abc.userRequestHandler()
+        self.assertNotEqual(test1, test2)
+
+
     def testInitOneArgument(self):
         command = "say"
         args = ["Hellow world!"]
@@ -39,8 +44,8 @@ class TestUserRequestHandler(unittest.TestCase):
 
         self.assertIsInstance(test, abc.userRequestHandler)
         self.assertEqual(command, test.command)
-        self.assertEqual(test.args, None)
-        self.assertEqual(test.flags, None)
+        self.assertEqual(test.args, [])
+        self.assertEqual(test.flags, {})
 
         del test
 
@@ -48,8 +53,8 @@ class TestUserRequestHandler(unittest.TestCase):
 
         self.assertIsInstance(test, abc.userRequestHandler)
         self.assertEqual(command, test.command)
-        self.assertEqual(test.args, None)
-        self.assertEqual(test.flags, None)
+        self.assertEqual(test.args, [])
+        self.assertEqual(test.flags, {})
 
         del test
 
@@ -58,34 +63,11 @@ class TestUserRequestHandler(unittest.TestCase):
         args = ["Hellow world!"]
         flags = {"channel" : "210654654006"}
 
-        test = abc.userRequestHandler(args, command=command, flags=flags)
+        test = abc.userRequestHandler(command, args, flags)
 
         self.assertIsInstance(test, abc.userRequestHandler)
         self.assertEqual(command, test.command)
         self.assertEqual(args, test.args)
         self.assertEqual(flags, test.flags)
-        
-        del test
-
-        test = abc.userRequestHandler(command, args=args, flags=flags)
-
-        self.assertIsInstance(test, abc.userRequestHandler)
-        self.assertEqual(command, test.command)
-        self.assertEqual(args, test.args)
-        self.assertEqual(flags, test.flags)
-
-        del test
-
-    def testInitIncorrectArgument(self):
-        command = "say"
-        args = ["Hellow world!"]
-        flags = {"channel" : "210654654006"}
-
-        test = abc.userRequestHandler(flags=flags)
-
-        self.assertIsInstance(test, abc.userRequestHandler)
-        self.assertEqual(test.command, None)
-        self.assertEqual(test.args, None)
-        self.assertEqual(test.flags, None)
         
         del test

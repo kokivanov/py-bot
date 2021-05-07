@@ -11,6 +11,5 @@ admin=moduletemplate(
     description= 'Provides administrative utilites',
     required_permissions=["%admin", "%moderator"],
     channels_blacklist=None,
-    roles_blacklist=None,
-    command=None
+    roles_blacklist=None
 )

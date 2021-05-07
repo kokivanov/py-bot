@@ -1,33 +1,54 @@
-from .commandtemplate import commandtemplate
 from .abc import commandParameters
+from .abc import userRequestHandler
+from .commandtemplate import commandtemplate
+from collections.abc import Callable
+import typing
+import discord
+import dataclasses as dc
 
-class moduletemplate(object):
+@dc.dataclass
+class moduletemplate(commandParameters):
     """
         Class that is each bot's module inhibited from
 
-        Reuires to initialize:
-            name : str # name of the module
-            commands : commandParameters # list of imported cammands that inhibited from commandtemplate
+        Requires to initialize:
+            name : str -- name of the module
+            commands : commandtemplate -- list of imported cammands that inhibited from commandtemplate
+
+            Isn't necessary but would be good to provite description
+
+            You can also specify what will happen whel module is called directly by setting `on_call` parameter with your function
+
+        Example:
+            admin=moduletemplate(
+            commands = [clear.clear, say.say],
+            name= 'admin',
+            description= 'Provides administrative utilites',
+            required_permissions=["%admin", "%moderator"],
+            channels_blacklist=None,
+            roles_blacklist=None,
+            command=None)
+        
+        Where `clear.clear` and `say.say` are functions
     """
 
-    def __init__(self,name, commands : list[commandtemplate], roles_blacklist : list = [], channels_blacklist : list = [], description="Module tah holds some commands and shares parameters with them", required_permissions : list = [], *args, **kwargs):
-        self.name = name
-        self.roles_blacklist = roles_blacklist
-        self.channels_blacklist = channels_blacklist
-        self.description = description
-        self.required_permissions = required_permissions
+    name : str = dc.field(default_factory=str)
+    description : str = dc.field(default_factory=str)
+    on_call : typing.Callable[[discord.Message, userRequestHandler, ...], discord.Message] = dc.field(default=None)
+    commands : list[typing.Callable[[discord.Message, userRequestHandler, ...], discord.Message]] = dc.field(default_factory=list)
 
-        self.command_list = {}
+    # Changes parameters of all related commands to modules default
+    
 
-        try:
-            for i in commands:
-                if not isinstance(i, commandtemplate): raise TypeError("{} is not a command instance".format(str(i.__class__.__name__)))
-                else: 
-                    self.command_list[i.name] = i
-        except TypeError as e:
-            print("Invalid parameters provided: {}".format(e))
+    # Changes parameters of all related commands
+    def changeRelated():
+        self_params = commandParameters(aliases=None, is_callable=None, required_permissions=self.required_permissions, channels_blacklist=self.channels_blacklist, roles_blacklist=self.roles_blacklist, custom_parameters=None)
+        
+        for i in commands:
+            i.update_r(values=self_params)
 
-        super().__init__()
+    # Updates settings and sends them to databasemanager
+    def update(): ...
 
     # Returns module config as json string
     def __invert__(self):
@@ -44,6 +65,12 @@ class moduletemplate(object):
     # Returns module name and descriprion as string
     def __str__(self):
         return "Module {}, {}".format(self.name, self.description)
+
+    def __call__(self):
+        try:
+            return self.on_call()
+        except AttributeError:
+            raise ValueError("Can't call unexisting function")
 
     # ======================================== Functions to manipulate permissions ============================================================
     def _set_permissions(self, *args, **kwargs):
@@ -165,3 +192,5 @@ class moduletemplate(object):
 
     def _prune_roles_blacklist(self, *args, **kwargs):
         self.roles_blacklist.clear()
+
+    
