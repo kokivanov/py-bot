@@ -10,7 +10,7 @@ def handle(message, config): ...
 def getList() -> dict:
     """
         Returns dictionary with:
-            (cammand_name/alias, command_object)
+            (command_name/alias, command_object)
     """
 
     module_list = []
@@ -34,7 +34,7 @@ def getList() -> dict:
 
     for i in module_list:
         for k in i.commands:
-            result["{}.{}".format(i.name, k.name)] = k
+            result["{}".format(k.name)] = k
 
     for i in module_list:
         for k in i.commands:
@@ -50,7 +50,10 @@ def getList() -> dict:
     for i in command_list:
         try:
             for a in i.aliases:
-                result[a] = v
+                if a in result.keys():
+                    pass
+                else:
+                    result[a] = i
         except TypeError:
             continue
     
@@ -81,4 +84,36 @@ def getListUnique() -> list:
 
     return result
 
+def getListModules() -> list:
+    """
+        Returns list of available modules.
+    """
+    result = list()
+
+    for mod in dir(modules):
+        if not mod.startswith("__"):
+            for ff in dir(getattr(modules, mod)):
+                if not str(ff).startswith("__"):
+                    tmp = getattr(getattr(modules, mod), ff)
+                    if isinstance(tmp, moduletemplate):
+                        result.append(tmp)
+
+    return result
+
+def getCommandList() -> list:
+    command_list = []
+    for cmd in dir(commands):
+            if not cmd.startswith("__"):
+                for ff in dir(getattr(commands, cmd)):
+                    if not str(ff).startswith("__"):
+                        tmp = getattr(getattr(commands, cmd), ff)
+                        if isinstance(tmp, commandtemplate): command_list.append(tmp)
+    
+    return command_list
+
 def __generete_aliases__map(config, cmd): ...
+
+COMMAND_DICT_FULL : dict = getList()
+COMMAND_LIST_FULL : list = getListUnique()
+COMMAND_LIST : list = getCommandList()
+MODULE_LIST : list = getListModules()

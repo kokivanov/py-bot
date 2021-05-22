@@ -36,6 +36,9 @@ class ErrorTemplate(Exception):
     def __str__(self):
         return "{} error: \n\tError_time = {}\n\tHash = {}\n".format(self.__class__.__name__, self.errorTime, self.errorHash)
 
+class DangerError(ErrorTemplate):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 class ArgumentErr(ErrorTemplate):
     def __init__(self, *args, **kwargs):
@@ -117,5 +120,5 @@ class InputError(ErrorTemplate):
             super().__init__()
 
     def __str__(self):
-        fomated = form(src=self.src, index=self.index)
-        return str(self.message) + ":" + str(("\n\t" + str(self.src)) if self.src != None else "") + ("\n\t {}".format(fomated) if fomated != "" else "") + '\n' + super().__str__()
+        formated = form(src=self.src, index=self.index)
+        return str(self.message) + ":" + str(("\n\t" + str(self.src)) if self.src != None else "") + ("\n\t {}".format(formated) if formated != "" else "") + '\n' + super().__str__()

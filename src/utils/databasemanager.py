@@ -1,9 +1,22 @@
+from io import TextIOWrapper
 import mysql.connector
 import json
+import asyncio
+from .abc import commandParameters as cmd_p
+
+
+def _join_headers_and_values_single(headers, values) -> dict:
+    res = {}
+    for i in range(len(headers)):
+        res[headers[i][0]] = values[i]
+
+    return res
+
 
 class dbmanager():
-    def __init__(self, config_file):
-        self.cfg = json.load(config_file)
+    def __init__(self, config_file: TextIOWrapper or dict):
+        self.cfg = json.load(config_file) if isinstance(
+            config_file, TextIOWrapper) else config_file
         if self.cfg["type"] == "mysql":
             self.client = mysql.connector.connect(
                 host=self.cfg["host"],
@@ -12,7 +25,7 @@ class dbmanager():
                 database=self.cfg["database"]
             )
 
-        if (self.client.is_connected()): 
+        if (self.client.is_connected()):
             print("Successfully connected to {}".format(self.cfg["database"]))
             self.cursor = self.client.cursor()
         else:
@@ -20,33 +33,75 @@ class dbmanager():
             print("Connection error trying to reconnect...")
             print("Is connected: ", self.client.is_connected())
 
-    def save(self, *args, **kwargs): ...
+    def is_still_connected(self) -> bool:
+        return self.client.is_connected()
 
-    def get_Server_Config(self, server_ID) -> dict:
-        self.cursor.execute("SELECT * FROM config_vw WHERE server_id={}".format(server_ID))
-        res = self.cursor.fetchall()[0]
-        self.cursor.execute("DESCRIBE config_vw")
+    def pingAndReconnect(self) -> bool:
+        return self.client.ping(reconnect=True)
+
+    async def get_Server_Config(self, server_ID, owner_ID) -> dict:
+
+        self.cursor.execute(
+            "SELECT * FROM config_vw WHERE server_id=\"{}\"".format(server_ID))
+        res = self.cursor.fetchone()
+        self.client.commit()
+
+        if res is None or len(res) < 1:
+            try:
+                self.cursor.execute(
+                    "INSERT INTO global_config(server_id) VALUES (\"{}\")".format(server_ID))
+                self.client.commit()
+                self.cursor.execute(
+                    "INSERT INTO feature_config(server_id) VALUES (\"{}\")".format(server_ID))
+                self.client.commit()
+            except mysql.connector.errors.IntegrityError:
+                pass
+            self.cursor.execute(
+                "SELECT * FROM config_vw WHERE server_id=\"{}\"".format(server_ID))
+            res = self.cursor.fetchone()
+            self.client.commit()
+
+        self.cursor.execute("DESC config_vw")
         headers = self.cursor.fetchall()
-        print(headers)
+        self.client.commit()
 
-        res_dict = {}
+        return _join_headers_and_values_single(headers=headers, values=res)
 
-        res_dict["server_owner_id"], res_dict["prefix"], res_dict["server_id"], res_dict["globam_mutes"], res_dict["global_bans"], res_dict["global_leveling"], res_dict["rpg_use_global_mobs"], res_dict["rpg_use_global_items"], res_dict["fishing_use_global_items"] = res
-        return res_dict    
-        
-    def get_command(self, *args, **kwargs): ...
-    def get_module(self, *args, **kwargs): ...
+    async def get_command(self, server_id: str, command_full_name: str): ...
+    async def update_command(self, server_id: str, parameters: cmd_p): ...
 
-    def update_server_config(self, *args, **kwargs): ...
-    def update_command(self, *args, **kwargs): ...
-    def update_module(self, *args, **kwargs): ...
+    async def get_prefix(self, server_id: str) -> dict:
+        self.cursor.execute(
+            "SELECT * FROM get_prefix_vw WHERE server_id=\"{}\"".format(server_id))
+        res = self.cursor.fetchone()
+        self.client.commit()
 
-    def get_leaderboard(self, *args, **kwargs): ...
-    def get_user_stats(self, *args, **kwargs): ...
+        if res is None or len(res) < 1:
+            self.cursor.execute(
+                "SELECT * FROM get_prefix_vw WHERE server_id=\"{}\"".format("0"))
+            res = self.cursor.fetchone()
+            self.client.commit()
 
-    def update_user_stats(self, *args, **kwargs): ...
+        self.cursor.execute("DESC get_prefix_vw")
+        headers = self.cursor.fetchall()
+        self.client.commit()
 
-    def get_column(self, *args, **kwargs): ...
-    def get_row(self, *args, **kwargs): ...
+        return _join_headers_and_values_single(headers=headers, values=res)
 
-    def update_row(self, *args, **kwargs): ...
+    async def update_server_config(self, *args, **kwargs): ...
+    async def update_module(self, *args, **kwargs): ...
+
+    async def get_leaderboard(self, *args, **kwargs): ...
+    async def get_user_stats(self, *args, **kwargs): ...
+
+    async def update_user_stats(self, *args, **kwargs): ...
+
+    async def get_column(self, *args, **kwargs): ...
+    async def get_row(self, *args, **kwargs): ...
+
+    async def update_row(self, *args, **kwargs): ...
+
+    async def delete_row(self, table, server_ID):
+        self.cursor.execute(
+            "DELETE FROM {} WHERE server_id={}".format(table, server_ID))
+        self.client.commit()

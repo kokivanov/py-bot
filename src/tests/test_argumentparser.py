@@ -9,7 +9,7 @@ from utils.abc import userRequestHandler
 
 from __utils import cfg
 
-class TestArgumetParser(unittest.TestCase):
+class TestArgumentParser(unittest.TestCase):
 
     def test_ParserSimple(self):
         config = cfg()

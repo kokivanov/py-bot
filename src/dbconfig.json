@@ -2,6 +2,6 @@
     "type" : "mysql",
     "host" : "localhost",
     "user" : "root",
-    "password" : "1270",
+    "password" : "Pass@123",
     "database" : "test"
 }

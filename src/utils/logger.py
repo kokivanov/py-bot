@@ -5,7 +5,7 @@ from os import path
 LOG_ALL = 0x1111
 LOG_EVENTS = 0x01111
 LOG_WARNS = 0x00111
-LOG_SECUTIRY = 0x00011
+LOG_SECURITY = 0x00011
 LOG_ERRORS = 0x00001
 
 LEVEL_MESSAGE = 0x10000
@@ -42,7 +42,7 @@ class logger():
             self.logging_level = kwargs.get('logging_level')
 
         except KeyError as e:
-            print("Error occured:\n{}".format(e))
+            print("Error occurred:\n{}".format(e))
 
     def log(self, coroutine): ... # decorator
 
